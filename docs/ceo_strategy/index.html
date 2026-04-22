@@ -526,6 +526,142 @@
             .road-chevron { display: none; }
         }
 
+        /* ========== Future stages (beyond Q2 2026) ========== */
+        .future-stages {
+            margin-top: 56px;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+        }
+        .future-stages-head {
+            margin-bottom: 28px;
+        }
+        .future-stages-head h3 {
+            font-size: 22px;
+            font-weight: 400;
+            color: var(--hmnd-navy);
+            margin: 6px 0 8px;
+            letter-spacing: -0.3px;
+        }
+        .future-stages-head p {
+            font-size: 14px;
+            color: var(--text-dim);
+            margin: 0;
+            line-height: 1.55;
+            max-width: 720px;
+        }
+        .stage-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px 30px;
+            margin-bottom: 22px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+        .stage-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--hmnd-blue);
+        }
+        .stage-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 24px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+        .stage-head-left {
+            flex: 1;
+            min-width: 260px;
+        }
+        .stage-quarter {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--hmnd-blue);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .stage-title {
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--hmnd-navy);
+            margin: 0 0 6px;
+            letter-spacing: -0.2px;
+        }
+        .stage-sub {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin: 0;
+            line-height: 1.55;
+            max-width: 680px;
+        }
+        .stage-duration {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-main);
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 6px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        .stage-agents {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 14px;
+        }
+        .agent-card {
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .agent-card .agent-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .agent-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--hmnd-bg-blue);
+            color: var(--hmnd-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+        .agent-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--hmnd-navy);
+            margin: 0;
+        }
+        .agent-desc {
+            font-size: 12.5px;
+            color: var(--text-dim);
+            line-height: 1.55;
+            margin: 0;
+        }
+
         /* ========== AI Platform ========== */
         .platform-block {
             margin-top: 16px;
@@ -917,6 +1053,102 @@
                 </div>
             </div>
             <div class="roadmap-timeline" id="roadmap-timeline"></div>
+
+            <div class="future-stages">
+                <div class="future-stages-head">
+                    <span class="uppercase-label"><i class="fa-solid fa-rocket"></i> Beyond CEO Brain</span>
+                    <h3>Next stages — quarterly horizons</h3>
+                    <p>After the CEO Brain ships in April–May 2026, the next three quarters extend AI into operations, go-to-market &amp; talent, and finally into the product itself.</p>
+                </div>
+
+                <div class="stage-card">
+                    <div class="stage-head">
+                        <div class="stage-head-left">
+                            <span class="stage-quarter"><i class="fa-solid fa-screwdriver-wrench"></i> Stage 2 · AI for Operations</span>
+                            <h4 class="stage-title">Scale execution across product, program and engineering</h4>
+                            <p class="stage-sub">Roll out AI copilots inside the operating core — product writing and release readiness, program-level visibility and technical knowledge support.</p>
+                        </div>
+                        <span class="stage-duration"><i class="fa-regular fa-clock"></i> ~3 months</span>
+                    </div>
+                    <div class="stage-agents">
+                        <div class="agent-card">
+                            <div class="agent-head">
+                                <div class="agent-icon"><i class="fa-solid fa-cube"></i></div>
+                                <h5 class="agent-name">Product Agent</h5>
+                            </div>
+                            <p class="agent-desc">Speeds up product writing, research synthesis, prioritization and release readiness.</p>
+                        </div>
+                        <div class="agent-card">
+                            <div class="agent-head">
+                                <div class="agent-icon"><i class="fa-solid fa-diagram-project"></i></div>
+                                <h5 class="agent-name">TPM Agent</h5>
+                            </div>
+                            <p class="agent-desc">Creates program-level visibility across moving streams, dependencies and blockers.</p>
+                        </div>
+                        <div class="agent-card">
+                            <div class="agent-head">
+                                <div class="agent-icon"><i class="fa-solid fa-code"></i></div>
+                                <h5 class="agent-name">Engineering Copilot</h5>
+                            </div>
+                            <p class="agent-desc">Makes technical knowledge and routine dev support immediately accessible to the team.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stage-card">
+                    <div class="stage-head">
+                        <div class="stage-head-left">
+                            <span class="stage-quarter"><i class="fa-solid fa-chart-simple"></i> Stage 3 · AI for Go-to-market &amp; Talent</span>
+                            <h4 class="stage-title">Sharpen outbound, content and hiring loops</h4>
+                            <p class="stage-sub">Deep research and partner pipeline discipline, consistent content and campaign prep, and a visible, less manual hiring and onboarding flow.</p>
+                        </div>
+                        <span class="stage-duration"><i class="fa-regular fa-clock"></i> ~3 months</span>
+                    </div>
+                    <div class="stage-agents">
+                        <div class="agent-card">
+                            <div class="agent-head">
+                                <div class="agent-icon"><i class="fa-solid fa-handshake"></i></div>
+                                <h5 class="agent-name">Strategy &amp; BD Agent</h5>
+                            </div>
+                            <p class="agent-desc">Deep research, executive briefs, market intelligence and partner pipeline discipline.</p>
+                        </div>
+                        <div class="agent-card">
+                            <div class="agent-head">
+                                <div class="agent-icon"><i class="fa-solid fa-bullhorn"></i></div>
+                                <h5 class="agent-name">Marketing / SMM Agent</h5>
+                            </div>
+                            <p class="agent-desc">Increases content consistency, velocity and campaign preparation quality.</p>
+                        </div>
+                        <div class="agent-card">
+                            <div class="agent-head">
+                                <div class="agent-icon"><i class="fa-solid fa-users"></i></div>
+                                <h5 class="agent-name">Talent Agent</h5>
+                            </div>
+                            <p class="agent-desc">Makes hiring and onboarding more visible and less manual — recruiting, comms and first-week readiness.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stage-card">
+                    <div class="stage-head">
+                        <div class="stage-head-left">
+                            <span class="stage-quarter"><i class="fa-solid fa-robot"></i> Stage 4 · AI in the Product</span>
+                            <h4 class="stage-title">From internal AI to customer-facing AI</h4>
+                            <p class="stage-sub">Move AI inside the product surface, starting with an operator-facing copilot that lowers the barrier to running robotics systems.</p>
+                        </div>
+                        <span class="stage-duration"><i class="fa-regular fa-clock"></i> ~3 months</span>
+                    </div>
+                    <div class="stage-agents">
+                        <div class="agent-card">
+                            <div class="agent-head">
+                                <div class="agent-icon"><i class="fa-solid fa-microchip"></i></div>
+                                <h5 class="agent-name">Operator Copilot</h5>
+                            </div>
+                            <p class="agent-desc">Lowers the barrier to operating robotics systems with natural-language assistance, mission briefings and procedure guidance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
     </main>
