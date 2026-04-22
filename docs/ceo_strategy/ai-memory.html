@@ -740,9 +740,139 @@
             </div>
         </div>
 
-        <!-- AS-IS view (mermaid + sections will be added in Step 1b and 1c) -->
+        <!-- AS-IS view -->
         <section id="view-asis" class="view-section active">
-            <!-- AS-IS mermaid diagram -->
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+autonumber
+
+box rgb(248, 250, 252) External
+participant EXT as Funds / partners / contacts
+end
+
+box rgb(248, 250, 252) Systems
+participant HBS as HubSpot
+participant FST as Fundraising Status
+participant NIN as NEW Intros + Banks
+participant FLW as Followers
+participant LID as Investor file
+participant WSH as Wishlists &amp; outreach
+participant GCL as Google Calendar
+participant FRK as Fundraising calendar
+participant DTR as Data Room
+participant CON as Confluence
+participant PTB as PitchBook
+participant LKD as LinkedIn
+participant TGM as Telegram
+participant SLK as Slack
+end
+
+box rgb(254, 242, 242) Internal
+participant COO as CEO Office
+participant RES as Research team
+end
+
+Note over COO: CEO Office includes Artem, Alina and the research team
+Note over COO: Process role — unified Second Brain across funds, people, meetings, threads and documents
+Note over RES: Research team is engaged when deeper internal or external gathering is needed
+
+loop For every context request [fund / company / person / meeting / thread / document]
+    COO->>COO: Identify entity and request type
+
+    par Collect main history
+        COO->>HBS: Search history by fund, contact, company or thread
+        HBS-->>COO: Email / thread / template / contact history
+    and Collect current status
+        COO->>FST: Look up overall fund status
+        FST-->>COO: Stage, next step, date, waiting feedback
+        COO->>NIN: Look up early stage
+        NIN-->>COO: Interest, date, follow-up, intro
+        COO->>FLW: Look up active stage
+        FLW-->>COO: Status, owner, replies, follow-up
+    and Collect investor history
+        COO->>LID: Look up past communication and touches
+        LID-->>COO: Investor history
+    and Collect meeting history
+        COO->>GCL: Search upcoming and past meetings
+        GCL-->>COO: Meeting history
+        COO->>FRK: Look up summary, owner and next step
+        FRK-->>COO: Fundraising meeting history
+    and Collect document context
+        COO->>DTR: Look up NDA / Data Room / access status
+        DTR-->>COO: Access, status, related materials
+    end
+
+    alt Deeper person / fund context needed
+        COO->>LKD: Search profile, connections, extra context
+        LKD-->>COO: Profile, connections, current role
+        COO->>PTB: Look up fund data
+        PTB-->>COO: Investments, background, exits, thesis
+    else Base context is enough
+        COO->>COO: Use the base context already gathered
+    end
+
+    alt Extra research or material gathering needed
+        COO->>RES: Research request [entity / goal / deadline / context type]
+        alt Internal research needed
+            RES->>HBS: Extra search of history, threads and templates
+            HBS-->>RES: Communication history and materials
+            RES->>TGM: Manual search across chats and voice messages
+            TGM-->>RES: Internal context from Telegram
+            RES->>SLK: Manual search in work conversations
+            SLK-->>RES: Internal context from Slack
+            RES->>CON: Search old briefs, templates, one-pagers and how-tos
+            CON-->>RES: Internal materials found
+        else External research needed
+            RES->>LKD: Search profile, connections and current role
+            LKD-->>RES: Profile, connections, extra context
+            RES->>PTB: Look up fund data
+            PTB-->>RES: Investments, exits, thesis, background
+            RES->>GCL: Check related meetings and participants
+            GCL-->>RES: Meeting and participant history
+        end
+        RES-->>COO: Research snapshot [findings / materials / links / quality tags]
+    else No extra research needed
+        COO->>COO: Use already gathered context
+    end
+
+    alt History insufficient or context fragmented
+        COO->>TGM: Manual search across chats and voice messages
+        TGM-->>COO: Telegram history
+        COO->>SLK: Manual search in work conversations
+        SLK-->>COO: Slack history
+        COO->>WSH: Search wishlist and outreach
+        WSH-->>COO: Outreach history, past touches and relevance
+        COO->>COO: Manual interpretation of fragmented context
+    else History gathered
+        COO->>COO: Interpret status, touches and process logic
+    end
+
+    alt Old briefs / templates / similar materials needed
+        COO->>CON: Search old briefs, templates, one-pagers and similar materials
+        CON-->>COO: Found materials and templates
+        COO->>COO: Tag materials [current / possibly outdated / needs check]
+    else No materials needed
+        COO->>COO: Skip template / old material search
+    end
+
+    COO->>COO: Build unified knowledge context
+
+    par Produce Second Brain outputs
+        COO->>COO: Instant brief [who / what happened / touch history / key facts]
+    and
+        COO->>COO: Pre-meeting brief [fund / person / comms history / prior contacts / risks / theses]
+    and
+        COO->>COO: Document context snapshot [NDA / Data Room / prior requests / access status]
+    and
+        COO->>COO: Related materials snapshot [old briefs / templates / similar materials / freshness tags]
+    and
+        COO->>COO: Decision snapshot [last touch / current stage / probable next step / warm-intro paths]
+    end
+end
+                </pre>
+            </div>
+
             <!-- AS-IS sections: goal, timeline, roles, systems, artifacts, metrics, pain points -->
         </section>
 
