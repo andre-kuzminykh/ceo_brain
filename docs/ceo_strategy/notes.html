@@ -955,11 +955,234 @@ end
             </div>
         </section>
 
-                <!-- TO-BE view (filled in Step 8) -->
+                <!-- TO-BE view -->
         <section id="view-tobe" class="view-section">
-            <div class="diagram-container" style="padding:60px; color:var(--text-dim); font-weight:300;">
-                <i class="fa-solid fa-clock" style="color:var(--hmnd-blue); font-size:22px; display:block; margin-bottom:12px;"></i>
-                TO-BE content for Notes will be added in the next batch (Step 8).
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+autonumber
+
+box rgb(248, 250, 252) Systems
+participant GCL as Google Calendar
+participant FRK as Fundraising calendar
+participant FFL as Fireflies
+participant FST as Fundraising Status
+participant HBS as HubSpot
+participant CHK as Daily Checklist / Task Log
+end
+
+box rgb(238, 242, 255) AI Layer
+participant NTS as Notes
+end
+
+box rgb(254, 242, 242) Internal
+participant COO as CEO Office
+end
+
+Note over NTS: Notes auto-converts transcripts and raw notes into structured Russian-language summaries
+Note over NTS: Enforces a single notes standard, suggests follow-up / next task / owner and tracks meeting fate at 1 week and 1 month
+
+loop Per fundraising meeting held
+    NTS->>GCL: Check past external meetings
+    GCL-->>NTS: Meeting held [fund, person, date]
+
+    NTS->>FFL: Check transcript availability
+    alt Transcript available and sufficient
+        FFL-->>NTS: Meeting transcript
+        NTS->>NTS: Build RU summary
+    else Transcript missing or incomplete
+        NTS->>NTS: Collect manual notes, bullets and calendar context
+        NTS->>NTS: Build summary from notes
+    end
+
+    NTS->>NTS: Normalise summary and short notes to single format
+    NTS->>NTS: Extract theses, risks, open questions, follow-up and next step
+
+    NTS->>HBS: Check communication history and thread
+    HBS-->>NTS: Comms history, prior follow-ups and replies
+
+    NTS->>NTS: Suggest follow-up, next task and owner [CEO Office / Alina / Dima / Yohann]
+
+    NTS->>FRK: Save meeting memory [summary / short notes / owner / follow-up / next step / open questions / risks]
+    FRK-->>NTS: Meeting memory updated
+
+    NTS->>FST: Update fund status [post-meeting / waiting feedback / last touch / next step]
+    FST-->>NTS: Fund status updated
+
+    NTS->>CHK: Add related tasks and follow-ups
+    CHK-->>NTS: Post-meeting tasks created or updated
+
+    NTS-->>COO: Post-meeting pack [summary / short notes / risks / next step / owner / follow-up]
+end
+
+loop Within a week after the meeting
+    NTS->>FRK: Check summary, short notes, owner and next step
+    FRK-->>NTS: Meeting history and follow-up
+    NTS->>FST: Check current fund status
+    FST-->>NTS: Stage, last touch, waiting feedback
+    NTS->>HBS: Check reply / follow-up fact
+    HBS-->>NTS: Email history, follow-ups and replies
+
+    alt Follow-up not sent
+        NTS->>NTS: Log missed action
+        NTS->>CHK: Create alarm / urgent follow-up task
+        CHK-->>NTS: Urgent task created
+        NTS-->>COO: Alert [follow-up missing]
+    else Follow-up sent but no reply
+        NTS->>NTS: Check gap and reminder need
+        NTS->>CHK: Update status [waiting reply / reminder needed]
+        CHK-->>NTS: Status updated
+        NTS-->>COO: Signal [waiting reply / reminder may be needed]
+    else Reply received
+        NTS->>NTS: Log post-meeting movement
+        NTS->>FST: Update stage or next step
+        FST-->>NTS: Fund stage updated
+        NTS-->>COO: Update [reply received / stage moved]
+    end
+end
+
+loop Weekly meeting review
+    COO->>NTS: Trigger weekly notes review
+    NTS->>GCL: Sync external meetings for the week
+    NTS->>FRK: Sync summary, short notes, owner and next step
+    NTS->>FST: Sync stage movement after meetings
+    NTS->>HBS: Check follow-up and reply events
+
+    NTS->>NTS: Build weekly meeting memory summary [follow-up / reply / stage movement]
+    NTS-->>COO: Weekly meeting memory pack [notes coverage / follow-up status / replies / stage movement / risks]
+end
+
+loop Monthly meeting lookback
+    COO->>NTS: Trigger monthly meeting lookback
+    NTS->>GCL: Collect meetings for the month
+    NTS->>FRK: Collect summaries, short notes and next steps for the month
+    NTS->>FST: Sync current fund stages
+    NTS->>HBS: Check post-meeting communications
+
+    NTS->>NTS: Analyse each meeting's fate at one-month mark [follow-up / reply / stage movement / stall]
+    NTS->>NTS: Build monthly meeting memory lookback
+    NTS-->>COO: Monthly meeting memory lookback [outcomes / stalled cases / reply rate / stage movement / missing follow-up]
+end
+                </pre>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-flag-checkered"></i> 1. Process Goal (TO-BE)</div>
+                <p class="text-block">Notes is a single agent that <strong>auto-builds a structured Russian-language summary</strong> from every transcript — or from raw notes and calendar context when the transcript is missing — enforces a single notes standard, suggests follow-up, next task and owner, and <strong>tracks the meeting's fate</strong> at 1 week and 1 month.</p>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-layer-group"></i> 2. Process description</div>
+                <div class="timeline">
+                    <div class="step">
+                        <span class="step-owner">Notes</span>
+                        <h4>A. Fetch transcript or compose from notes</h4>
+                        <p>Pulls Fireflies transcript when present; otherwise builds the summary from manual notes, bullet points and calendar context.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Notes</span>
+                        <h4>B. RU summary + standard short notes</h4>
+                        <p>Generates a Russian-language summary with theses, risks, open questions, follow-up and next step — normalised to a single format.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Notes</span>
+                        <h4>C. Suggested follow-up and owner</h4>
+                        <p>Cross-checks HubSpot for prior comms and proposes follow-up, next task and owner (CEO Office / Alina / Dima / Yohann).</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Notes → FRK / FST / CHK</span>
+                        <h4>D. Persist meeting memory, update stage, spawn tasks</h4>
+                        <p>Saves meeting memory (summary, short notes, owner, follow-up, next step, open questions, risks), updates fund status (post-meeting, waiting feedback, last touch) and creates follow-up tasks.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Notes → CEO Office</span>
+                        <h4>E. Post-meeting pack</h4>
+                        <p>Delivers a post-meeting pack — summary, short notes, risks, next step, owner and follow-up — for immediate review.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Notes</span>
+                        <h4>F. Within-a-week post-meeting control</h4>
+                        <p>Checks whether follow-up was sent and whether a reply came back. Creates urgent tasks on missing follow-up, keeps waiting-reply states honest and updates fund stage on reply.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Notes</span>
+                        <h4>G. Weekly meeting memory pack</h4>
+                        <p>On weekly trigger: syncs meetings, summaries, stage movement and comms; returns a weekly pack covering notes coverage, follow-up status, replies, stage movement and risks.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Notes</span>
+                        <h4>H. Monthly meeting lookback</h4>
+                        <p>On monthly trigger: analyses each meeting's fate at the one-month mark (follow-up / reply / stage movement / stall) and delivers a monthly lookback.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-users"></i> 3. Roles &amp; responsibility (RACI)</div>
+                <div class="grid-3">
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="role-info"><h5>CEO Office</h5><p>Consumes post-meeting packs, weekly and monthly lookbacks. Triggers weekly / monthly cycles.</p></div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-note-sticky"></i></div>
+                        <div class="role-info"><h5>Notes</h5><p>Auto-builds RU summaries, saves meeting memory, tracks post-meeting fate and produces weekly / monthly packs.</p></div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-database"></i></div>
+                        <div class="role-info"><h5>FRK / FST / CHK</h5><p>Auto-updated stores — meeting memory, fund status, and post-meeting task log.</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-server"></i> 4. Systems (TO-BE architecture)</h4>
+                    <ul>
+                        <li><strong>Notes agent</strong> — transcript ingestion, RU summary, standardisation, fate tracking.</li>
+                        <li><strong>Fireflies</strong> — transcripts.</li>
+                        <li><strong>GCL / FRK</strong> — calendars and meeting memory store.</li>
+                        <li><strong>FST</strong> — fund status, auto-updated after every meeting.</li>
+                        <li><strong>HubSpot</strong> — comms history and reply events.</li>
+                        <li><strong>Daily Checklist / Task Log (CHK)</strong> — post-meeting tasks.</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-file-contract"></i> 5. Artifacts</h4>
+                    <ul>
+                        <li><strong>Structured RU summary</strong> — theses, risks, open questions, follow-up, next step.</li>
+                        <li><strong>Short notes</strong> — what discussed / agreed / to do next.</li>
+                        <li><strong>Meeting memory</strong> — persisted to FRK.</li>
+                        <li><strong>Post-meeting pack</strong> — summary, risks, next step, owner, follow-up.</li>
+                        <li><strong>Weekly meeting memory pack</strong> and <strong>monthly lookback</strong>.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-chart-pie"></i> 6. Metrics (Target)</div>
+                <table class="custom-table">
+                    <thead><tr><th>Metric</th><th>Target</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="highlight-text">Summary generation</span></td><td><strong>100% automatic</strong> — every meeting produces a structured summary.</td></tr>
+                        <tr><td><span class="highlight-text">Format consistency</span></td><td>Single enforced standard across authors.</td></tr>
+                        <tr><td><span class="highlight-text">Meeting memory coverage</span></td><td>100% — including meetings with missing transcripts (reconstructed from notes + calendar).</td></tr>
+                        <tr><td><span class="highlight-text">Post-meeting fate tracking</span></td><td>Weekly + monthly — fate of every meeting is measured.</td></tr>
+                        <tr><td><span class="highlight-text">Missed follow-up detection</span></td><td>Real-time alert on missing follow-up within the 1-week window.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section-box" style="background: transparent; border: none; padding: 0; box-shadow: none;">
+                <div class="section-title"><i class="fa-solid fa-rocket"></i> 7. Initiative (automation point)</div>
+                <button class="initiative-card" onclick="openDrawer()">
+                    <div class="init-icon"><i class="fa-solid fa-note-sticky"></i></div>
+                    <div class="init-text">
+                        <h5>Notes — Structured Meeting Memory (RU)</h5>
+                        <p>Auto-generates Russian-language summaries from transcripts or notes, enforces a single standard, suggests follow-up / next task / owner and tracks meeting fate across 1-week and 1-month horizons.</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-right init-arrow"></i>
+                </button>
             </div>
         </section>
     </main>
@@ -970,8 +1193,48 @@ end
         <div class="drawer-head">
             <button class="drawer-close" onclick="closeDrawer()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
             <span class="drawer-badge"><i class="fa-solid fa-bolt"></i> Module 04</span>
-            <h2 class="drawer-title">Notes initiative</h2>
-            <p class="drawer-subtitle">Drawer content will be filled in Step 8 when the TO-BE view is added.</p>
+            <h2 class="drawer-title">Notes — Structured Meeting Memory (RU)</h2>
+            <p class="drawer-subtitle">Turns transcripts and raw notes into structured Russian-language summaries with theses, risks and next steps — and tracks every meeting's fate at 1 week and 1 month.</p>
+            <div class="drawer-meta">
+                <span class="drawer-chip effect"><i class="fa-solid fa-bullseye"></i> Context coverage</span>
+                <span class="drawer-chip date"><i class="fa-solid fa-calendar-day"></i> May 8, 2026</span>
+                <span class="drawer-chip"><i class="fa-solid fa-hashtag"></i> № 04</span>
+            </div>
+        </div>
+        <div class="drawer-body">
+            <h4 class="drawer-section-title">What this module does</h4>
+            <p style="font-size:14px; color:var(--text-main); line-height:1.65; margin:0 0 24px; font-weight:300;">
+                Notes automatically turns transcripts and meeting notes into structured Russian-language summaries with key theses, risks, agreements and next steps. It works even when a full transcript is missing, enforces a single notes standard and links each meeting to follow-ups, tasks, owners and downstream fund-stage movement.
+            </p>
+
+            <h4 class="drawer-section-title">User stories</h4>
+            <ol class="story-list">
+                <li><span>After a meeting the agent uses the Fireflies transcript to auto-build a Russian summary with theses, risks and next steps — no manual writing.</span></li>
+                <li><span>The agent can assemble a summary from notes or bullets when the transcript is missing — the meeting does not drop out of the process.</span></li>
+                <li><span>See short meeting notes in a single format — recall decisions fast without reading long transcripts.</span></li>
+                <li><span>The agent proposes follow-up, next task and owner from the summary — to move comms forward faster.</span></li>
+                <li><span>The agent shows the fate of the meeting one week and one month later — follow-up, reply, stage movement.</span></li>
+            </ol>
+
+            <h4 class="drawer-section-title">Delivery requirements</h4>
+            <ul class="req-list">
+                <li><i class="fa-solid fa-check"></i> Fireflies transcript ingestion with fallback to notes / bullets / calendar context.</li>
+                <li><i class="fa-solid fa-check"></i> RU structured summary template: theses, risks, open questions, follow-up, next step.</li>
+                <li><i class="fa-solid fa-check"></i> Meeting memory object stored in the fundraising calendar and linked to HubSpot.</li>
+                <li><i class="fa-solid fa-check"></i> Automated weekly and monthly meeting-fate lookback packs.</li>
+                <li><i class="fa-solid fa-check"></i> Post-meeting task creation: summary, follow-up, next step, owner confirmation.</li>
+            </ul>
+
+            <div style="margin-top: 28px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="https://docs.google.com/spreadsheets/d/1QiCLAk5O0tma55ZGNQyAXRNfP-oxS0OC9Y8H_b4SMvo/edit?usp=sharing" target="_blank" rel="noopener"
+                   style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--hmnd-blue); color:#fff; font-weight:500; font-size:13px; text-decoration:none;">
+                    <i class="fa-solid fa-file-lines"></i> Open full strategy
+                </a>
+                <button onclick="closeDrawer()"
+                        style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--surface); color:var(--hmnd-navy); font-family:inherit; font-weight:500; font-size:13px; border:1px solid var(--border); cursor:pointer;">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </button>
+            </div>
         </div>
     </aside>
 
