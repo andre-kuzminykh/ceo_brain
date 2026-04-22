@@ -996,11 +996,271 @@ end
             </div>
         </section>
 
-                <!-- TO-BE view (filled in Step 14) -->
+                <!-- TO-BE view -->
         <section id="view-tobe" class="view-section">
-            <div class="diagram-container" style="padding:60px; color:var(--text-dim); font-weight:300;">
-                <i class="fa-solid fa-clock" style="color:var(--hmnd-blue); font-size:22px; display:block; margin-bottom:12px;"></i>
-                TO-BE content for Docs will be added in the next batch (Step 14).
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+autonumber
+
+box rgb(248, 250, 252) External
+participant EXT as Funds / partners / contacts
+end
+
+box rgb(248, 250, 252) Systems
+participant EML as Email
+participant HBS as HubSpot
+participant FST as Fundraising Status
+participant NIN as NEW Intros + Banks
+participant FLW as Followers
+participant LID as Investor file
+participant DTR as Data Room
+participant CON as Confluence
+participant PTB as PitchBook
+participant GCL as Google Calendar
+participant FRK as Fundraising calendar
+end
+
+box rgb(238, 242, 255) AI Layer
+participant DOC as Docs
+end
+
+box rgb(254, 242, 242) Internal
+participant COO as CEO Office
+end
+
+Note over DOC: Docs infers which document is needed in each context — NDA, Data Room access, one-pager, brief or other investor-facing material
+Note over DOC: Picks the template, builds a checklist, drafts the next step and tracks document workflow status end-to-end
+
+loop Per signal, email or meeting requesting a document
+    DOC->>EML: Check inbound request
+    EML-->>DOC: Email / request / revisions / access ask / materials ask
+
+    DOC->>HBS: Search history and prior thread
+    HBS-->>DOC: Email history, templates and prior touches
+
+    DOC->>FST: Check current fund status
+    FST-->>DOC: Stage, next step, date, waiting feedback
+    DOC->>NIN: Check early stage if needed
+    NIN-->>DOC: Interest, follow-up, date
+    DOC->>FLW: Check active stage if needed
+    FLW-->>DOC: Status, replies, owner
+    DOC->>LID: Check investor prior requests
+    LID-->>DOC: Investor history and document touches
+
+    DOC->>DOC: Decide which document is needed [NDA / Data Room access / one-pager / brief / investor-facing materials]
+    DOC->>DOC: Build suggested next document step [send NDA / respond to revisions / grant access / remind / prep materials]
+    DOC-->>COO: Document intent [type / context / next step / urgency]
+end
+
+loop NDA and Data Room workflow
+    alt NDA needed
+        DOC->>CON: Search NDA template and action checklist
+        CON-->>DOC: NDA template / checklist / instructions / old format
+        DOC->>DOC: Prepare NDA draft and next actions
+
+        alt Revisions needed
+            DOC->>EML: Send NDA for review / revisions
+            EML-->>EXT: NDA sent
+            EXT-->>EML: Revisions or comments received
+            EML-->>DOC: Revisions received
+            DOC->>DOC: Process revisions and update NDA draft
+        else No revisions
+            DOC->>EML: Send NDA
+            EML-->>EXT: NDA sent
+        end
+
+    else Data Room access needed
+        DOC->>DTR: Check access and current status
+        DTR-->>DOC: Access granted / not granted / needs adjustment
+
+        alt Access not granted
+            DOC->>DTR: Grant access
+            DTR-->>DOC: Access granted
+            DOC->>EML: Send access notification
+            EML-->>EXT: Access confirmed
+        else Adjustment or reminder needed
+            DOC->>EML: Send reply / reminder
+            EML-->>EXT: Reply sent
+        end
+    end
+
+    DOC->>DOC: Build document status snapshot [to send / sent / on revisions / signed / access granted / waiting reply]
+    DOC-->>COO: Document workflow snapshot [status / next step / blockers / waiting side]
+end
+
+loop Document and process status check
+    DOC->>HBS: Check latest document thread
+    HBS-->>DOC: Last email / comment / alignment
+    DOC->>LID: Check investor history
+    LID-->>DOC: Prior requests and documents
+    DOC->>FST: Check fund status
+    FST-->>DOC: Stage, next step, waiting feedback
+    DOC->>DTR: Check access status
+    DTR-->>DOC: Access granted / not granted / restricted
+
+    DOC->>DOC: Interpret document status and next step
+    DOC->>DOC: Build suggested next action [send / revise / grant access / remind / wait]
+    DOC-->>COO: Next document action [what / why / priority / dependency]
+end
+
+loop Briefing docs and investor-facing materials
+    alt External meeting or materials request
+        DOC->>GCL: Check the meeting
+        GCL-->>DOC: Date, attendees, context
+        DOC->>FRK: Check fundraising context
+        FRK-->>DOC: Meeting history, summary, next step
+
+        par Fund context
+            DOC->>PTB: Search fund data
+            PTB-->>DOC: Data, exits, background, investment focus
+        and Comms history
+            DOC->>HBS: Search comms history
+            HBS-->>DOC: Threads, prior emails and materials
+        and Templates and old formats
+            DOC->>CON: Search template, how-to and old brief
+            CON-->>DOC: Template, example or outdated format
+        end
+
+        DOC->>DOC: Prepare draft briefing docs / one-pager / investor-facing materials from current context
+        DOC->>DOC: Check completeness, freshness and fit to current fund stage
+        DOC-->>COO: Draft materials [brief / one-pager / investor-facing pack / checklist before send]
+    else No meeting, just document follow-up
+        DOC->>DOC: Draft the next document step
+        DOC-->>COO: Draft next step [send / remind / revise / grant access]
+    end
+end
+
+loop After a document action
+    DOC->>FST: Update fund status [NDA sent / waiting revisions / access granted / waiting reply]
+    alt Fund in early stage
+        DOC->>NIN: Update status
+        NIN-->>DOC: Early stage updated
+    else Fund in active stage
+        DOC->>FLW: Update status
+        FLW-->>DOC: Active stage updated
+    end
+    DOC->>LID: Update investor document history
+    LID-->>DOC: History updated
+    DOC->>DOC: Update document memory, status and next expected action
+end
+                </pre>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-flag-checkered"></i> 1. Process Goal (TO-BE)</div>
+                <p class="text-block">Docs is a single agent that <strong>infers the document</strong> needed in each context, <strong>picks the right template</strong>, builds a checklist and <strong>drives NDA, Data Room, briefing and investor-facing workflows end-to-end</strong> — with continuous document-status visibility and auto-updated trackers.</p>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-layer-group"></i> 2. Process description</div>
+                <div class="timeline">
+                    <div class="step">
+                        <span class="step-owner">Docs</span>
+                        <h4>A. Pick up request + context + document intent</h4>
+                        <p>Reads the inbound request, pulls thread from HubSpot, fund stage and investor history — and classifies the needed document (NDA / Data Room access / one-pager / brief / investor-facing). Delivers a document intent pack.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Docs</span>
+                        <h4>B. NDA workflow</h4>
+                        <p>Fetches the NDA template + checklist from Confluence, prepares the draft and handles the revisions loop — send, receive, process, update — until signed.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Docs</span>
+                        <h4>C. Data Room workflow</h4>
+                        <p>Checks Data Room status; grants / adjusts access or sends reminders, then notifies the investor.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Docs → COO</span>
+                        <h4>D. Document workflow snapshot</h4>
+                        <p>Builds and delivers a status snapshot — to send / sent / on revisions / signed / access granted / waiting — with blockers and waiting side.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Docs → COO</span>
+                        <h4>E. Next document action recommendation</h4>
+                        <p>Cross-checks HubSpot, LID, FST and DTR; interprets state and recommends the next action (send / revise / grant / remind / wait) with priority and dependency.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Docs → COO</span>
+                        <h4>F. Briefing docs / investor-facing pack</h4>
+                        <p>For upcoming meetings / material requests — pulls PitchBook + HubSpot + Confluence in parallel, assembles a draft brief / one-pager / investor-facing pack, checks completeness and fit, and delivers it with a pre-send checklist.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Docs</span>
+                        <h4>G. Post-action tracker updates + memory</h4>
+                        <p>After every document action — auto-updates FST, the stage tracker (NIN / FLW) and investor history (LID), and persists document memory, status and next expected action.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-users"></i> 3. Roles &amp; responsibility (RACI)</div>
+                <div class="grid-3">
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="role-info"><h5>CEO Office</h5><p>Consumes document intent, workflow snapshots, next-action recommendations and draft materials. Approves drafts before send.</p></div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-file-lines"></i></div>
+                        <div class="role-info"><h5>Docs</h5><p>Classifies document type, picks templates, drives NDA / access / briefing workflows, tracks status and updates trackers.</p></div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-database"></i></div>
+                        <div class="role-info"><h5>CON / DTR / trackers</h5><p>Auto-fed stores — Confluence templates, Data Room access and FST / NIN / FLW / LID updated by the agent.</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-server"></i> 4. Systems (TO-BE architecture)</h4>
+                    <ul>
+                        <li><strong>Docs agent</strong> — intent classification, template selection, workflow driver.</li>
+                        <li><strong>Confluence (CON)</strong> — template library with checklist + versioning.</li>
+                        <li><strong>Data Room (DTR)</strong> — access control, managed by the agent.</li>
+                        <li><strong>HubSpot</strong> — thread history and templates.</li>
+                        <li><strong>FST / NIN / FLW / LID</strong> — auto-updated status stores.</li>
+                        <li><strong>PitchBook</strong> — external fund data for briefs.</li>
+                        <li><strong>GCL / FRK</strong> — meeting context for briefing materials.</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-file-contract"></i> 5. Artifacts</h4>
+                    <ul>
+                        <li><strong>Document intent pack</strong> — type / context / next step / urgency.</li>
+                        <li><strong>NDA draft + revision loop</strong> — auto-sent on approval.</li>
+                        <li><strong>Data Room access notifications</strong>.</li>
+                        <li><strong>Document workflow snapshot</strong> — status + blockers + waiting side.</li>
+                        <li><strong>Next document action recommendation</strong>.</li>
+                        <li><strong>Draft materials</strong> — brief / one-pager / investor-facing pack with pre-send checklist.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-chart-pie"></i> 6. Metrics (Target)</div>
+                <table class="custom-table">
+                    <thead><tr><th>Metric</th><th>Target</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="highlight-text">Doc type decision</span></td><td>Automatic — classifier infers type from signal + stage.</td></tr>
+                        <tr><td><span class="highlight-text">Template selection</span></td><td>Zero hunting — the agent returns the right template and checklist.</td></tr>
+                        <tr><td><span class="highlight-text">Document status visibility</span></td><td>Real-time workflow snapshot — no thread digging.</td></tr>
+                        <tr><td><span class="highlight-text">Briefing prep</span></td><td>Draft ready on demand — PitchBook + HubSpot + Confluence merged automatically.</td></tr>
+                        <tr><td><span class="highlight-text">Tracker updates</span></td><td>Automatic post-action — FST / NIN / FLW / LID stay in sync with document state.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section-box" style="background: transparent; border: none; padding: 0; box-shadow: none;">
+                <div class="section-title"><i class="fa-solid fa-rocket"></i> 7. Initiative (automation point)</div>
+                <button class="initiative-card" onclick="openDrawer()">
+                    <div class="init-icon"><i class="fa-solid fa-file-lines"></i></div>
+                    <div class="init-text">
+                        <h5>Docs — End-to-end Document Workflows</h5>
+                        <p>Infers the right document, picks the template, drives NDA / Data Room / briefing workflows, tracks status end-to-end and auto-updates trackers on every document action.</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-right init-arrow"></i>
+                </button>
             </div>
         </section>
     </main>
@@ -1011,8 +1271,48 @@ end
         <div class="drawer-head">
             <button class="drawer-close" onclick="closeDrawer()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
             <span class="drawer-badge"><i class="fa-solid fa-bolt"></i> Module 07</span>
-            <h2 class="drawer-title">Docs initiative</h2>
-            <p class="drawer-subtitle">Drawer content will be filled in Step 14 when the TO-BE view is added.</p>
+            <h2 class="drawer-title">Docs — End-to-end Document Workflows</h2>
+            <p class="drawer-subtitle">Infers the right document, picks the template, drives NDA / Data Room / briefing workflows and tracks document status end-to-end.</p>
+            <div class="drawer-meta">
+                <span class="drawer-chip effect"><i class="fa-solid fa-bullseye"></i> Doc prep speed &amp; quality</span>
+                <span class="drawer-chip date"><i class="fa-solid fa-calendar-day"></i> May 20, 2026</span>
+                <span class="drawer-chip"><i class="fa-solid fa-hashtag"></i> № 07</span>
+            </div>
+        </div>
+        <div class="drawer-body">
+            <h4 class="drawer-section-title">What this module does</h4>
+            <p style="font-size:14px; color:var(--text-main); line-height:1.65; margin:0 0 24px; font-weight:300;">
+                Docs determines which document the context requires — NDA, Data Room access, one-pager, brief or other investor-facing material. It picks the right template, builds a checklist and tracks the document workflow end-to-end, accelerating preparation, approval and dispatch without manual intervention.
+            </p>
+
+            <h4 class="drawer-section-title">User stories</h4>
+            <ol class="story-list">
+                <li><span>The agent infers from context which document is needed: NDA, Data Room access, one-pager, brief or other.</span></li>
+                <li><span>Get the right NDA template and action checklist automatically — to launch the process faster.</span></li>
+                <li><span>The agent drafts the next document step from the email or meeting: send NDA, respond to revisions, grant access, remind.</span></li>
+                <li><span>See document status: to send / sent / under revision / signed / access granted / waiting reply — control without thread digging.</span></li>
+                <li><span>The agent creates draft briefing docs, one-pagers and investor-facing materials from the current context.</span></li>
+            </ol>
+
+            <h4 class="drawer-section-title">Delivery requirements</h4>
+            <ul class="req-list">
+                <li><i class="fa-solid fa-check"></i> Document intent classifier linked to fund stage and signal type.</li>
+                <li><i class="fa-solid fa-check"></i> Template library in Confluence with checklist and versioning.</li>
+                <li><i class="fa-solid fa-check"></i> NDA flow: draft → send → collect revisions → finalise → log status.</li>
+                <li><i class="fa-solid fa-check"></i> Data Room workflow: access request → grant / adjust → notify → monitor.</li>
+                <li><i class="fa-solid fa-check"></i> Briefing pack generator pulling PitchBook, HubSpot, FRK, CON into one deck / doc.</li>
+            </ul>
+
+            <div style="margin-top: 28px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="https://docs.google.com/spreadsheets/d/1QiCLAk5O0tma55ZGNQyAXRNfP-oxS0OC9Y8H_b4SMvo/edit?usp=sharing" target="_blank" rel="noopener"
+                   style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--hmnd-blue); color:#fff; font-weight:500; font-size:13px; text-decoration:none;">
+                    <i class="fa-solid fa-file-lines"></i> Open full strategy
+                </a>
+                <button onclick="closeDrawer()"
+                        style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--surface); color:var(--hmnd-navy); font-family:inherit; font-weight:500; font-size:13px; border:1px solid var(--border); cursor:pointer;">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </button>
+            </div>
         </div>
     </aside>
 
