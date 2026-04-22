@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture — CEO Brain Strategy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --hmnd-navy: #06091c;
+            --hmnd-blue: #4953d8;
+            --hmnd-blue-dark: #3b44b5;
+            --hmnd-bg-blue: rgba(73, 83, 216, 0.05);
+            --text-main: #06091c;
+            --text-dim: #64748b;
+            --surface: #ffffff;
+            --surface-soft: #f8fafc;
+            --border: #e2e8f0;
+            --shadow-sm: 0 4px 15px -5px rgba(6, 9, 28, 0.05);
+            --shadow-md: 0 12px 35px -10px rgba(6, 9, 28, 0.08);
+            --shadow-lg: 0 25px 60px -15px rgba(6, 9, 28, 0.15);
+            --sidebar-w: 280px;
+        }
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0; padding: 0;
+            background: var(--surface);
+            color: var(--text-main);
+            font-family: 'Outfit', system-ui, sans-serif;
+            font-weight: 300;
+            height: 100vh;
+            overflow: hidden;
+        }
+        body { display: flex; }
+
+        /* ========== Sidebar ========== */
+        aside.sidebar {
+            width: var(--sidebar-w);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 36px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex-shrink: 0;
+            overflow-y: auto;
+            z-index: 110;
+        }
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 17px; font-weight: 700; color: var(--hmnd-navy); margin-bottom: 36px; letter-spacing: 0.3px; }
+        .logo-dot { width: 12px; height: 12px; background: var(--hmnd-blue); border-radius: 50%; box-shadow: 0 0 0 4px var(--hmnd-bg-blue); flex-shrink: 0; }
+        .nav-label { font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-dim); margin: 16px 0 8px 12px; letter-spacing: 0.12em; }
+        .nav-item {
+            padding: 10px 14px; border-radius: 10px; cursor: pointer;
+            transition: all 0.2s ease; color: var(--text-dim);
+            display: flex; align-items: center; gap: 12px;
+            font-size: 13px; font-weight: 400; text-decoration: none;
+            border: 1px solid transparent;
+        }
+        .nav-item:hover { background: var(--hmnd-bg-blue); color: var(--hmnd-blue); }
+        .nav-item.active {
+            background: var(--hmnd-bg-blue); color: var(--hmnd-blue);
+            font-weight: 500; border-color: rgba(73, 83, 216, 0.15);
+        }
+        .nav-item i { width: 16px; text-align: center; }
+
+        /* ========== Main ========== */
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+            background: var(--surface-soft);
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(73, 83, 216, 0.03) 0%, transparent 70%),
+                linear-gradient(rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.8) 100%);
+        }
+
+        .page-head {
+            padding: 48px 56px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 24px;
+        }
+        .header-title-wrap { display: flex; align-items: flex-start; gap: 16px; }
+        .back-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; border-radius: 10px;
+            border: 1px solid var(--border); color: var(--text-dim);
+            text-decoration: none; transition: all 0.2s ease;
+            font-size: 14px; margin-top: 4px;
+        }
+        .back-btn:hover {
+            border-color: var(--hmnd-blue); color: var(--hmnd-blue);
+            transform: translateX(-2px);
+        }
+        .uppercase-label {
+            font-size: 11px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.12em; color: var(--hmnd-blue);
+            display: inline-flex; align-items: center; gap: 8px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 32px; font-weight: 300; line-height: 1.1;
+            margin: 0 0 8px; color: var(--hmnd-navy); letter-spacing: -0.5px;
+        }
+        h1 .accent { color: var(--hmnd-blue); font-weight: 500; }
+        .subtitle {
+            margin: 8px 0 0; color: var(--text-dim);
+            font-size: 14px; line-height: 1.55;
+            max-width: 640px; font-weight: 300;
+        }
+
+        /* ========== Stack Architecture Layout ========== */
+        .diagram-container {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 16px 56px 80px;
+            position: relative;
+        }
+        .stack-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            position: relative;
+            z-index: 2;
+        }
+        .arch-layer {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px 40px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .arch-layer:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(73, 83, 216, 0.3);
+        }
+        .arch-layer.foundation-layer {
+            background: linear-gradient(to right, #1a1c29, var(--hmnd-navy), #1a1c29);
+            color: #fff; border: none;
+            border-bottom: 6px solid var(--hmnd-blue);
+            box-shadow: 0 20px 40px -10px rgba(6, 9, 28, 0.4);
+        }
+        .foundation-layer .layer-title { color: rgba(255, 255, 255, 0.7); }
+        .foundation-layer .node-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        .arch-layer.core-layer {
+            background: linear-gradient(135deg, var(--hmnd-navy) 0%, #0f1437 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+        .arch-layer.core-layer::before {
+            content: ''; position: absolute;
+            top: -50%; right: -20%;
+            width: 80%; height: 200%;
+            background: radial-gradient(circle, rgba(73,83,216,0.2) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .core-layer .layer-title { color: rgba(255, 255, 255, 0.7); }
+        .core-layer .layer-title i { color: #fff; }
+
+        .layer-title {
+            font-size: 13px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.12em;
+            color: var(--text-dim);
+            margin: 0 0 24px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .layer-title i {
+            color: var(--hmnd-blue); font-size: 16px;
+            background: var(--hmnd-bg-blue);
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px;
+        }
+
+        .node-grid {
+            display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;
+        }
+        .node-grid-10 {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px; position: relative; z-index: 1;
+        }
+        .node-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px 20px;
+            display: flex; align-items: center; justify-content: center;
+            gap: 12px;
+            font-size: 15px; font-weight: 500;
+            color: var(--hmnd-navy);
+            transition: all 0.2s;
+            flex: 1; min-width: 160px;
+            box-shadow: 0 2px 8px rgba(6, 9, 28, 0.02);
+        }
+        .node-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--hmnd-blue);
+            color: var(--hmnd-blue);
+            box-shadow: var(--shadow-md);
+        }
+        .node-card i { color: var(--hmnd-blue); font-size: 18px; }
+        .core-layer .node-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            backdrop-filter: blur(10px);
+            flex-direction: column; text-align: center; gap: 12px;
+            padding: 22px 14px;
+        }
+        .core-layer .node-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(73, 83, 216, 0.5);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transform: translateY(-4px);
+        }
+        .core-layer .node-card i {
+            color: #fff; font-size: 26px;
+            background: rgba(255, 255, 255, 0.1);
+            width: 48px; height: 48px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 12px; transition: all 0.3s;
+        }
+        .core-layer .node-card:hover i {
+            background: var(--hmnd-blue); transform: scale(1.1);
+        }
+        .core-layer .node-card span {
+            font-size: 14px; font-weight: 400; letter-spacing: 0.3px;
+        }
+
+        .db-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        .db-card {
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px 20px;
+            display: flex; flex-direction: column;
+            align-items: center; text-align: center;
+            gap: 16px;
+            transition: all 0.3s;
+            position: relative; overflow: hidden;
+        }
+        .db-card::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; width: 100%; height: 3px;
+            background: var(--hmnd-blue);
+            opacity: 0.5; transition: opacity 0.3s;
+        }
+        .db-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--hmnd-blue);
+        }
+        .db-card:hover::before { opacity: 1; }
+        .db-type {
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.15em; color: var(--hmnd-blue);
+            background: var(--surface);
+            padding: 4px 12px; border-radius: 999px;
+            border: 1px solid rgba(73, 83, 216, 0.15);
+        }
+        .db-name {
+            font-size: 18px; font-weight: 500; color: var(--hmnd-navy);
+            display: flex; flex-direction: column;
+            align-items: center; gap: 10px;
+        }
+        .db-name i {
+            font-size: 28px; color: var(--text-dim);
+            transition: color 0.3s;
+        }
+        .db-card:hover .db-name i { color: var(--hmnd-navy); }
+
+        .ai-models-grid {
+            display: flex; justify-content: center; flex-wrap: wrap;
+            gap: 30px;
+        }
+        .ai-model-card {
+            background: linear-gradient(145deg, #ffffff, #f0f2f5);
+            border: 1px solid rgba(73, 83, 216, 0.2);
+            border-radius: 16px;
+            padding: 20px 40px;
+            display: flex; align-items: center; gap: 16px;
+            font-size: 18px; font-weight: 500;
+            color: var(--hmnd-navy);
+            box-shadow: 0 8px 20px rgba(73, 83, 216, 0.08);
+            transition: all 0.3s;
+            min-width: 200px;
+        }
+        .ai-model-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 12px 25px rgba(73, 83, 216, 0.15);
+            border-color: var(--hmnd-blue);
+        }
+        .model-icon {
+            display: flex; align-items: center; justify-content: center;
+            background: var(--hmnd-bg-blue);
+            padding: 12px; border-radius: 12px;
+            color: var(--hmnd-blue);
+        }
+        .model-icon svg { width: 24px; height: 24px; }
+        .model-icon i {
+            font-size: 24px; width: 24px; height: 24px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        @media (max-width: 900px) {
+            .node-grid-10 { grid-template-columns: repeat(3, 1fr); }
+            .db-grid { grid-template-columns: repeat(2, 1fr); }
+            .arch-layer { padding: 24px; }
+            .page-head { padding: 32px 24px 16px; }
+            .diagram-container { padding: 16px 24px 60px; }
+        }
+        @media (max-width: 600px) {
+            .node-grid-10 { grid-template-columns: repeat(2, 1fr); }
+            .db-grid { grid-template-columns: 1fr; }
+            .ai-models-grid { flex-direction: column; }
+            h1 { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-dot"></div>
+            <span>CEO BRAIN</span>
+        </div>
+
+        <a href="index.html" class="nav-item"><i class="fa-solid fa-grip"></i> Overview</a>
+        <a href="index.html#roadmap" class="nav-item"><i class="fa-solid fa-route"></i> Roadmap 2026</a>
+
+        <div class="nav-label">AI Modules</div>
+        <a href="ai-memory.html" class="nav-item"><i class="fa-solid fa-brain"></i> AI Memory</a>
+        <a href="performance.html" class="nav-item"><i class="fa-solid fa-gauge-high"></i> Performance</a>
+        <a href="tasks.html" class="nav-item"><i class="fa-solid fa-list-check"></i> Tasks</a>
+        <a href="notes.html" class="nav-item"><i class="fa-solid fa-note-sticky"></i> Notes</a>
+        <a href="calendar.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Calendar</a>
+        <a href="email.html" class="nav-item"><i class="fa-solid fa-envelope"></i> Email</a>
+        <a href="docs.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Docs</a>
+        <a href="tables.html" class="nav-item"><i class="fa-solid fa-table"></i> Tables</a>
+        <a href="slides.html" class="nav-item"><i class="fa-solid fa-chalkboard"></i> Slides</a>
+        <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-column"></i> Reports</a>
+
+        <div class="nav-label">Resources</div>
+        <a href="architecture.html" class="nav-item active"><i class="fa-solid fa-layer-group"></i> Architecture</a>
+        <a href="https://docs.google.com/spreadsheets/d/1QiCLAk5O0tma55ZGNQyAXRNfP-oxS0OC9Y8H_b4SMvo/edit?usp=sharing" target="_blank" rel="noopener" class="nav-item">
+            <i class="fa-solid fa-up-right-from-square"></i> Strategy doc
+        </a>
+    </aside>
+
+    <main>
+        <div class="page-head">
+            <div class="header-title-wrap">
+                <a href="index.html" class="back-btn" aria-label="Back to overview">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div>
+                    <span class="uppercase-label"><i class="fa-solid fa-layer-group"></i> Architecture</span>
+                    <h1>CEO Brain <span class="accent">Stack</span></h1>
+                    <p class="subtitle">Six-layer architecture from GCP foundation up to client interfaces, with the ten AI modules sitting in the business layer on top of shared orchestration, data and model layers.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="diagram-container">
+            <div class="stack-wrapper">
+
+                <!-- Layer 6: Client (Top) -->
+                <div class="arch-layer">
+                    <div class="layer-title"><i class="fa-solid fa-desktop"></i> Client Layer (Interfaces)</div>
+                    <div class="node-grid">
+                        <div class="node-card"><i class="fa-brands fa-telegram"></i> Telegram</div>
+                        <div class="node-card"><i class="fa-brands fa-slack"></i> Slack</div>
+                        <div class="node-card"><i class="fa-solid fa-video"></i> Google Meet</div>
+                        <div class="node-card"><i class="fa-solid fa-plug"></i> API / MCP</div>
+                    </div>
+                </div>
+
+                <!-- Layer 5: Business Logic (10 Modules) -->
+                <div class="arch-layer core-layer">
+                    <div class="layer-title"><i class="fa-solid fa-cubes"></i> Business Layer (10 AI Modules)</div>
+                    <div class="node-grid-10">
+                        <div class="node-card"><i class="fa-solid fa-brain"></i> <span>AI Memory</span></div>
+                        <div class="node-card"><i class="fa-solid fa-gauge-high"></i> <span>Performance</span></div>
+                        <div class="node-card"><i class="fa-solid fa-list-check"></i> <span>Tasks</span></div>
+                        <div class="node-card"><i class="fa-solid fa-envelope"></i> <span>Email</span></div>
+                        <div class="node-card"><i class="fa-solid fa-chart-column"></i> <span>Reports</span></div>
+                        <div class="node-card"><i class="fa-solid fa-note-sticky"></i> <span>Notes</span></div>
+                        <div class="node-card"><i class="fa-solid fa-calendar-days"></i> <span>Calendar</span></div>
+                        <div class="node-card"><i class="fa-solid fa-file-lines"></i> <span>Docs</span></div>
+                        <div class="node-card"><i class="fa-solid fa-table"></i> <span>Tables</span></div>
+                        <div class="node-card"><i class="fa-solid fa-chalkboard"></i> <span>Slides</span></div>
+                    </div>
+                </div>
+
+                <!-- Layer 4: AI Models -->
+                <div class="arch-layer">
+                    <div class="layer-title"><i class="fa-solid fa-microchip"></i> AI Layer (Models)</div>
+                    <div class="ai-models-grid">
+                        <div class="ai-model-card">
+                            <div class="model-icon">
+                                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A6.0651 6.0651 0 0 0 19.0192 19.818a5.9847 5.9847 0 0 0 3.9977-2.9001 6.0462 6.0462 0 0 0-.735-7.0968zM12 21.0667a4.4628 4.4628 0 0 1-2.4578-.73l.0047-.0028 4.0205-2.3213.1613-.0931v-5.2638l4.4916 2.593v.0336a4.5103 4.5103 0 0 1-6.2203 5.7844zM5.0833 18.062a4.4675 4.4675 0 0 1-.9542-2.378l.0048.0024 4.0205 2.3213v5.2638a4.5103 4.5103 0 0 1-3.0711-8.2095zM4.0322 9.0714a4.4675 4.4675 0 0 1 1.5036-2.0734l-.0048.0024v4.6426l-4.0205 2.3213a4.5103 4.5103 0 0 1 2.5217-4.893zM12 2.9333a4.4628 4.4628 0 0 1 2.4578.73l-.0047.0028-4.0205 2.3213-.1613.0931v5.2638l-4.4916-2.593v-.0336a4.5103 4.5103 0 0 1 6.2203-5.7844zM18.9167 5.938a4.4675 4.4675 0 0 1 .9542 2.378l-.0048-.0024-4.0205-2.3213v-5.2638a4.5103 4.5103 0 0 1 3.0711 8.2095zM19.9678 14.9286a4.4675 4.4675 0 0 1-1.5036 2.0734l.0048-.0024v-4.6426l4.0205-2.3213a4.5103 4.5103 0 0 1-2.5217 4.893zM14.4 12l-2.4-1.3856-2.4 1.3856v2.7713l2.4 1.3856 2.4-1.3856V12z"/>
+                                </svg>
+                            </div>
+                            GPT-4
+                        </div>
+                        <div class="ai-model-card">
+                            <div class="model-icon">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            </div>
+                            Claude 3.5
+                        </div>
+                        <div class="ai-model-card">
+                            <div class="model-icon">
+                                <i class="fa-solid fa-ear-listen"></i>
+                            </div>
+                            Whisper
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layer 3: Services & Orchestration -->
+                <div class="arch-layer">
+                    <div class="layer-title"><i class="fa-solid fa-gears"></i> Services &amp; Orchestration Layer</div>
+                    <div class="node-grid">
+                        <div class="node-card"><i class="fa-solid fa-diagram-project"></i> LangGraph</div>
+                        <div class="node-card"><i class="fa-solid fa-link"></i> LangChain</div>
+                        <div class="node-card"><i class="fa-solid fa-eye"></i> LangSmith</div>
+                        <div class="node-card"><i class="fa-solid fa-bolt"></i> Supabase</div>
+                        <div class="node-card"><i class="fa-solid fa-network-wired"></i> n8n</div>
+                        <div class="node-card"><i class="fa-solid fa-layer-group"></i> Streamlit</div>
+                        <div class="node-card"><i class="fa-solid fa-memory"></i> Redis</div>
+                        <div class="node-card"><i class="fa-brands fa-docker"></i> Docker</div>
+                    </div>
+                </div>
+
+                <!-- Layer 2: Data -->
+                <div class="arch-layer">
+                    <div class="layer-title"><i class="fa-solid fa-database"></i> Data Layer</div>
+                    <div class="db-grid">
+                        <div class="db-card">
+                            <span class="db-type">Relational</span>
+                            <div class="db-name"><i class="fa-solid fa-table-list"></i> PostgreSQL</div>
+                        </div>
+                        <div class="db-card">
+                            <span class="db-type">Vector</span>
+                            <div class="db-name"><i class="fa-solid fa-vector-square"></i> Qdrant</div>
+                        </div>
+                        <div class="db-card">
+                            <span class="db-type">Graph</span>
+                            <div class="db-name"><i class="fa-solid fa-circle-nodes"></i> Neo4j</div>
+                        </div>
+                        <div class="db-card">
+                            <span class="db-type">Object Storage</span>
+                            <div class="db-name"><i class="fa-solid fa-box-archive"></i> Cloud Storage</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layer 1: Infrastructure (Foundation) -->
+                <div class="arch-layer foundation-layer">
+                    <div class="layer-title"><i class="fa-solid fa-server"></i> Infrastructure (Foundation)</div>
+                    <div class="node-grid">
+                        <div class="node-card" style="font-size: 20px; font-weight: 600; letter-spacing: 1px; padding: 24px;">
+                            <i class="fa-brands fa-google" style="color: #fff; font-size: 24px;"></i> Google Cloud Platform
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
