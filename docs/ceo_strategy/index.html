@@ -1214,7 +1214,10 @@
             <ul class="requirements-list" id="dr-requirements"></ul>
 
             <div class="drawer-cta">
-                <a href="https://docs.google.com/spreadsheets/d/1QiCLAk5O0tma55ZGNQyAXRNfP-oxS0OC9Y8H_b4SMvo/edit?usp=sharing" target="_blank" rel="noopener" class="btn btn-primary">
+                <a id="dr-module-link" href="#" class="btn btn-primary">
+                    <i class="fa-solid fa-diagram-project"></i> Open AS-IS / TO-BE
+                </a>
+                <a href="https://docs.google.com/spreadsheets/d/1QiCLAk5O0tma55ZGNQyAXRNfP-oxS0OC9Y8H_b4SMvo/edit?usp=sharing" target="_blank" rel="noopener" class="btn">
                     <i class="fa-solid fa-file-lines"></i> Open full strategy
                 </a>
                 <button class="btn" onclick="closeDrawer()">
@@ -1530,6 +1533,9 @@
 
             document.getElementById('dr-stories').innerHTML = m.stories.map(s => `<li><span>${s}</span></li>`).join('');
             document.getElementById('dr-requirements').innerHTML = m.requirements.map(r => `<li><i class="fa-solid fa-check"></i> ${r}</li>`).join('');
+
+            const moduleLink = document.getElementById('dr-module-link');
+            if (moduleLink) moduleLink.setAttribute('href', slugMap[id] + '.html');
 
             document.getElementById('drawer').classList.add('active');
             document.getElementById('drawer').setAttribute('aria-hidden', 'false');

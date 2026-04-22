@@ -173,6 +173,14 @@ class TestIndexPage:
         html = (PAGES_DIR / "index.html").read_text(encoding="utf-8")
         assert 'id="drawer"' in html
 
+    def test_drawer_has_module_link(self):
+        """The drawer that opens from the Roadmap must contain an AS-IS / TO-BE
+        deep-link button, and openModule() must set its href from slugMap."""
+        html = (PAGES_DIR / "index.html").read_text(encoding="utf-8")
+        assert 'id="dr-module-link"' in html
+        assert "Open AS-IS / TO-BE" in html
+        assert "moduleLink.setAttribute('href'" in html
+
 
 class TestArchitecturePage:
     def test_has_six_layers(self):
