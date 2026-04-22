@@ -968,11 +968,263 @@ end
             </div>
         </section>
 
-                <!-- TO-BE view (filled in Step 18) -->
+                <!-- TO-BE view -->
         <section id="view-tobe" class="view-section">
-            <div class="diagram-container" style="padding:60px; color:var(--text-dim); font-weight:300;">
-                <i class="fa-solid fa-clock" style="color:var(--hmnd-blue); font-size:22px; display:block; margin-bottom:12px;"></i>
-                TO-BE content for Slides will be added in the next batch (Step 18).
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+autonumber
+
+box rgb(248, 250, 252) External
+participant EXT as Funds / partners / contacts
+end
+
+box rgb(248, 250, 252) Systems
+participant GCL as Google Calendar
+participant FRK as Fundraising calendar
+participant FST as Fundraising Status
+participant NIN as NEW Intros + Banks
+participant FLW as Followers
+participant LID as Investor file
+participant HBS as HubSpot
+participant PTB as PitchBook
+participant CON as Confluence
+participant SLD as Slides / Decks
+end
+
+box rgb(238, 242, 255) AI Layer
+participant SLS as Slides
+end
+
+box rgb(254, 242, 242) Internal
+participant COO as CEO Office
+end
+
+Note over SLS: Slides collects presentation materials from notes, docs, trackers and CRM into a single slide format
+Note over SLS: Generates one-slide summaries, meeting packs, investor materials and executive slides using unified templates and narrative logic
+
+loop One-slide summary per fund
+    COO->>SLS: Request one-slide summary [fund / goal / meeting context]
+    SLS->>FST: Check current fund status
+    FST-->>SLS: Stage, next step, date, waiting feedback
+    SLS->>HBS: Check communication history
+    HBS-->>SLS: Threads, emails, context
+    SLS->>LID: Check investor history
+    LID-->>SLS: Prior communication
+    SLS->>FRK: Check meetings and summary
+    FRK-->>SLS: Meeting history, owner, follow-up
+
+    SLS->>SLS: Collect key theses [who / where / what happened / next step / risks]
+    SLS->>SLS: Compose into one-slide narrative
+    SLS->>SLD: Build one-slide summary
+    SLD-->>SLS: One-slide summary ready
+    SLS-->>COO: One-slide summary [status / history / next step / risks]
+end
+
+loop Meeting pack for external meeting
+    COO->>SLS: Request meeting pack
+    SLS->>GCL: Check upcoming external meetings
+    GCL-->>SLS: Meeting list
+    SLS->>FRK: Check meeting summary
+    FRK-->>SLS: Summary, next step, owner
+    SLS->>FST: Check fund stage
+    FST-->>SLS: Stage, blockers, next step
+    SLS->>FLW: Check active stage
+    FLW-->>SLS: Follow-up, status, replies
+
+    par Fund data
+        SLS->>PTB: Search fund data
+        PTB-->>SLS: Exits, background, investments, thesis
+    and Comms history
+        SLS->>HBS: Search comms history
+        HBS-->>SLS: Threads, prior touches, emails
+    and Investor context
+        SLS->>LID: Check investor history
+        LID-->>SLS: Key touches and prior materials
+    end
+
+    alt Need template or old format
+        SLS->>CON: Search deck template / old format / how-to
+        CON-->>SLS: Template or older format
+    else Current template fits
+        SLS->>SLS: Use current template
+    end
+
+    SLS->>SLS: Build meeting pack structure [context / fund / person / history / theses / risks / next step]
+    SLS->>SLD: Build draft meeting pack
+    SLD-->>SLS: Draft meeting pack ready
+    SLS-->>COO: Draft meeting pack [slides / narrative / prep points / open questions]
+end
+
+loop Transform briefs / tables / notes into slides
+    COO->>SLS: Request presentation material [brief / table / notes / internal memo]
+    SLS->>PTB: Collect fund data for brief
+    PTB-->>SLS: Fund data
+    SLS->>FST: Collect fund status
+    FST-->>SLS: Stage and next step
+    SLS->>FRK: Collect meeting notes and summary
+    FRK-->>SLS: Meeting notes, follow-up, owner
+    SLS->>CON: Search slide template or format
+    CON-->>SLS: Template or older deck
+
+    SLS->>SLS: Transform briefs / tables / notes into slide narrative
+    SLS->>SLS: Clean, shorten and restructure content for presentation
+    SLS->>SLD: Pack into presentation format
+    SLD-->>SLS: Presentation material ready
+    SLS-->>COO: Slide-ready draft [structured story / key points / visual hierarchy]
+end
+
+loop Executive pipeline slides
+    COO->>SLS: Request executive pipeline slides
+    SLS->>FST: Collect overall pipeline status
+    FST-->>SLS: Stages, blockers, decline reasons
+    SLS->>NIN: Collect early stages and pending intros
+    NIN-->>SLS: Interest, date, follow-up
+    SLS->>FLW: Collect active funds and replies
+    FLW-->>SLS: Statuses, meetings, owner
+    SLS->>FRK: Collect external meeting summaries
+    FRK-->>SLS: Meeting history and next steps
+    SLS->>LID: Collect key investor history
+    LID-->>SLS: Latest touches and context
+
+    SLS->>SLS: Build executive narrative [what changed / where is progress / where are blockers / what needs a decision]
+    SLS->>SLS: Highlight management insights and decision points
+    SLS->>SLD: Build executive pipeline slides
+    SLD-->>SLS: Executive slides ready
+    SLS-->>COO: Executive pack [pipeline view / progress / blockers / decisions needed]
+end
+
+loop Unified templates and formats
+    alt New deck or format update needed
+        SLS->>CON: Search templates, older decks and how-tos
+        CON-->>SLS: Partially current template or old format
+        SLS->>SLS: Adapt structure and format to current task
+        SLS->>SLD: Apply updated template
+    else Current template fits
+        SLS->>SLD: Use existing template
+    end
+
+    SLD-->>SLS: Materials assembled under a single visual standard
+    SLS->>SLS: Check consistency of narrative, layout and visual standard
+end
+
+loop Post-assembly QA
+    SLS->>SLS: Check context completeness, data freshness and narrative quality
+    SLS->>SLS: Build suggested edits [what to clarify / what to shorten / what to strengthen]
+    SLS-->>COO: Slide QA snapshot [completeness / consistency / narrative gaps / suggested improvements]
+end
+                </pre>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-flag-checkered"></i> 1. Process Goal (TO-BE)</div>
+                <p class="text-block">Slides is a single agent that <strong>turns notes, docs, trackers and CRM into slides</strong> — one-slide fund summaries, external-meeting packs, brief-to-slides transformations, executive pipeline decks — under unified templates and narrative logic, with automatic quality checks on every output.</p>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-layer-group"></i> 2. Process description</div>
+                <div class="timeline">
+                    <div class="step">
+                        <span class="step-owner">CEO Office → Slides</span>
+                        <h4>A. One-slide fund summary</h4>
+                        <p>On request — collects fund status, comms history, investor history and meeting summaries, composes a one-slide narrative and returns the final slide with status / history / next step / risks.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Slides</span>
+                        <h4>B. External-meeting pack</h4>
+                        <p>Pulls meeting context, fund stage and active-stage data; collects PitchBook / HubSpot / LID in parallel; picks a Confluence template and delivers a draft meeting pack with slides, narrative, prep points and open questions.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Slides</span>
+                        <h4>C. Brief / table / notes → slide narrative</h4>
+                        <p>Transforms internal briefs, tables and notes into structured slide content — cleans, shortens and restructures it — and delivers a slide-ready draft with key points and visual hierarchy.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Slides</span>
+                        <h4>D. Executive pipeline pack</h4>
+                        <p>Collects pipeline data, early and active stages, external-meeting summaries and investor history; builds an executive narrative with management insights and decision points and returns an executive pack with pipeline view, progress, blockers and decisions needed.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Slides</span>
+                        <h4>E. Unified templates + consistency checks</h4>
+                        <p>Applies a single template per deck type, adapts it when needed, and checks narrative / layout / visual consistency automatically.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Slides → COO</span>
+                        <h4>F. Slide QA snapshot</h4>
+                        <p>After every assembly — checks completeness, data freshness and narrative quality; returns a QA snapshot with suggested edits (what to clarify / shorten / strengthen).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-users"></i> 3. Roles &amp; responsibility (RACI)</div>
+                <div class="grid-3">
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="role-info"><h5>CEO Office</h5><p>Requests slide artifacts, reviews drafts and QA snapshots, approves final decks.</p></div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-chalkboard"></i></div>
+                        <div class="role-info"><h5>Slides</h5><p>Collects source data, composes narrative, applies templates and runs QA on every deck.</p></div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-folder-open"></i></div>
+                        <div class="role-info"><h5>Confluence (CON) + Slides store</h5><p>Template library and deck output — used and updated automatically by Slides.</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-server"></i> 4. Systems (TO-BE architecture)</h4>
+                    <ul>
+                        <li><strong>Slides agent</strong> — narrative engine, template selector, QA checker.</li>
+                        <li><strong>GCL / FRK</strong> — meeting context source.</li>
+                        <li><strong>FST / NIN / FLW / LID</strong> — pipeline and investor source data.</li>
+                        <li><strong>HubSpot</strong> — comms history.</li>
+                        <li><strong>PitchBook</strong> — external fund data.</li>
+                        <li><strong>Confluence (CON)</strong> — template library.</li>
+                        <li><strong>Slides / Decks (SLD)</strong> — auto-assembled presentation output.</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-file-contract"></i> 5. Artifacts</h4>
+                    <ul>
+                        <li><strong>One-slide fund summary</strong> — status / history / next step / risks.</li>
+                        <li><strong>Meeting pack draft</strong> — slides / narrative / prep points / open questions.</li>
+                        <li><strong>Slide-ready draft</strong> — structured story / key points / visual hierarchy.</li>
+                        <li><strong>Executive pack</strong> — pipeline view / progress / blockers / decisions.</li>
+                        <li><strong>Unified templates</strong> applied under a single visual standard.</li>
+                        <li><strong>Slide QA snapshot</strong> — completeness / consistency / gaps / suggested edits.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-chart-pie"></i> 6. Metrics (Target)</div>
+                <table class="custom-table">
+                    <thead><tr><th>Metric</th><th>Target</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="highlight-text">One-slide summary</span></td><td>Minutes — on-demand per fund.</td></tr>
+                        <tr><td><span class="highlight-text">Meeting pack</span></td><td>Draft ready before every upcoming external meeting.</td></tr>
+                        <tr><td><span class="highlight-text">Brief → slides</span></td><td>Automatic transformation of internal memos into slide narrative.</td></tr>
+                        <tr><td><span class="highlight-text">Executive pipeline deck</span></td><td>Refreshable on demand — no stale pipeline decks.</td></tr>
+                        <tr><td><span class="highlight-text">Template consistency</span></td><td>Enforced — all decks under a single visual standard, checked automatically.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section-box" style="background: transparent; border: none; padding: 0; box-shadow: none;">
+                <div class="section-title"><i class="fa-solid fa-rocket"></i> 7. Initiative (automation point)</div>
+                <button class="initiative-card" onclick="openDrawer()">
+                    <div class="init-icon"><i class="fa-solid fa-chalkboard"></i></div>
+                    <div class="init-text">
+                        <h5>Slides — Presentation Materials on Demand</h5>
+                        <p>Assembles one-slide summaries, meeting packs, executive decks and brief-to-slides transformations from notes, docs and trackers under unified templates — with automatic narrative QA on every output.</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-right init-arrow"></i>
+                </button>
             </div>
         </section>
     </main>
@@ -983,8 +1235,48 @@ end
         <div class="drawer-head">
             <button class="drawer-close" onclick="closeDrawer()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
             <span class="drawer-badge"><i class="fa-solid fa-bolt"></i> Module 09</span>
-            <h2 class="drawer-title">Slides initiative</h2>
-            <p class="drawer-subtitle">Drawer content will be filled in Step 18 when the TO-BE view is added.</p>
+            <h2 class="drawer-title">Slides — Presentation Materials on Demand</h2>
+            <p class="drawer-subtitle">Assembles presentation materials from notes, docs and trackers into slide format — one-slide summaries, meeting packs, executive pipeline decks — under unified templates with narrative QA.</p>
+            <div class="drawer-meta">
+                <span class="drawer-chip effect"><i class="fa-solid fa-bullseye"></i> Slide prep speed &amp; quality</span>
+                <span class="drawer-chip date"><i class="fa-solid fa-calendar-day"></i> May 27, 2026</span>
+                <span class="drawer-chip"><i class="fa-solid fa-hashtag"></i> № 09</span>
+            </div>
+        </div>
+        <div class="drawer-body">
+            <h4 class="drawer-section-title">What this module does</h4>
+            <p style="font-size:14px; color:var(--text-main); line-height:1.65; margin:0 0 24px; font-weight:300;">
+                Slides assembles presentation materials from notes, documents, trackers and other sources into slide format. It generates one-slide fund summaries, meeting drafts and turns working materials into presentation form — for fast, consistent outputs to external and internal meetings.
+            </p>
+
+            <h4 class="drawer-section-title">User stories</h4>
+            <ol class="story-list">
+                <li><span>Get a one-slide summary per fund — status and next steps — to prep fast for comms.</span></li>
+                <li><span>The agent assembles a draft meeting pack per fund from notes, docs and trackers — no from-scratch material gathering.</span></li>
+                <li><span>Convert briefs, tables and notes into presentation format — to accelerate external-meeting prep.</span></li>
+                <li><span>Get executive slides on the fundraising pipeline and key changes — one-screen picture.</span></li>
+                <li><span>Use unified slide templates — consistent materials, faster assembly.</span></li>
+            </ol>
+
+            <h4 class="drawer-section-title">Delivery requirements</h4>
+            <ul class="req-list">
+                <li><i class="fa-solid fa-check"></i> One-slide fund summary generator: status, history, next step, risks.</li>
+                <li><i class="fa-solid fa-check"></i> Meeting pack draft builder: context, fund, person, history, theses, risks, next step.</li>
+                <li><i class="fa-solid fa-check"></i> Brief / table / notes → slide narrative transformation.</li>
+                <li><i class="fa-solid fa-check"></i> Executive pipeline deck with pipeline view, progress, blockers and decision points.</li>
+                <li><i class="fa-solid fa-check"></i> Slide QA: completeness, consistency, narrative gaps, suggested improvements.</li>
+            </ul>
+
+            <div style="margin-top: 28px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="https://docs.google.com/spreadsheets/d/1QiCLAk5O0tma55ZGNQyAXRNfP-oxS0OC9Y8H_b4SMvo/edit?usp=sharing" target="_blank" rel="noopener"
+                   style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--hmnd-blue); color:#fff; font-weight:500; font-size:13px; text-decoration:none;">
+                    <i class="fa-solid fa-file-lines"></i> Open full strategy
+                </a>
+                <button onclick="closeDrawer()"
+                        style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--surface); color:var(--hmnd-navy); font-family:inherit; font-weight:500; font-size:13px; border:1px solid var(--border); cursor:pointer;">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </button>
+            </div>
         </div>
     </aside>
 
