@@ -9,7 +9,208 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* Styles will be added in Step 1a.2 and 1a.3 */
+        :root {
+            --hmnd-navy: #06091c;
+            --hmnd-blue: #4953d8;
+            --hmnd-blue-dark: #3b44b5;
+            --hmnd-bg-blue: rgba(73, 83, 216, 0.05);
+            --accent-red: #ef4444;
+            --accent-red-bg: rgba(239, 68, 68, 0.05);
+            --text-main: #06091c;
+            --text-dim: #64748b;
+            --surface: #ffffff;
+            --surface-soft: #f8fafc;
+            --border: #e2e8f0;
+            --shadow-sm: 0 4px 15px -5px rgba(6, 9, 28, 0.04);
+            --shadow-md: 0 10px 30px -10px rgba(6, 9, 28, 0.06);
+            --sidebar-w: 280px;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: var(--surface);
+            color: var(--text-main);
+            font-family: 'Outfit', system-ui, sans-serif;
+            font-weight: 300;
+            height: 100vh;
+            overflow: hidden;
+        }
+        body { display: flex; }
+
+        /* ========== Sidebar ========== */
+        aside.sidebar {
+            width: var(--sidebar-w);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 36px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex-shrink: 0;
+            overflow-y: auto;
+            z-index: 110;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--hmnd-navy);
+            margin-bottom: 36px;
+            letter-spacing: 0.3px;
+        }
+        .logo-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--hmnd-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px var(--hmnd-bg-blue);
+            flex-shrink: 0;
+        }
+        .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin: 16px 0 8px 12px;
+            letter-spacing: 0.12em;
+        }
+        .nav-item {
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            font-weight: 400;
+            text-decoration: none;
+            border: 1px solid transparent;
+        }
+        .nav-item:hover { background: var(--hmnd-bg-blue); color: var(--hmnd-blue); }
+        .nav-item.active {
+            background: var(--hmnd-bg-blue);
+            color: var(--hmnd-blue);
+            font-weight: 500;
+            border-color: rgba(73, 83, 216, 0.15);
+        }
+        .nav-item i { width: 16px; text-align: center; }
+
+        /* ========== Main + Header + Toggle ========== */
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 36px 56px 60px;
+            background: var(--surface);
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .header-title-wrap {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        .back-btn:hover {
+            border-color: var(--hmnd-blue);
+            color: var(--hmnd-blue);
+            transform: translateX(-2px);
+        }
+        h1 {
+            font-size: 30px;
+            font-weight: 300;
+            margin: 0;
+            line-height: 1.1;
+            color: var(--hmnd-navy);
+            letter-spacing: -0.5px;
+        }
+        h1 .accent { color: var(--hmnd-blue); font-weight: 400; }
+        .subtitle {
+            margin: 8px 0 0;
+            color: var(--text-dim);
+            font-size: 14px;
+            line-height: 1.55;
+            max-width: 640px;
+            font-weight: 300;
+        }
+        .uppercase-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--hmnd-blue);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        /* AS-IS / TO-BE toggle */
+        .toggle-switch {
+            display: inline-flex;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 4px;
+            flex-shrink: 0;
+        }
+        .toggle-btn {
+            padding: 9px 22px;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            color: var(--text-dim);
+            background: transparent;
+            border: none;
+        }
+        .toggle-btn.active.asis {
+            background: var(--surface);
+            color: var(--accent-red);
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.12);
+        }
+        .toggle-btn.active.tobe {
+            background: var(--surface);
+            color: var(--hmnd-blue);
+            box-shadow: 0 4px 10px rgba(73, 83, 216, 0.12);
+        }
+
+        /* View animations */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.35s ease forwards;
+        }
+        .view-section.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
