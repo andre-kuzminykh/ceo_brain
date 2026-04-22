@@ -1028,11 +1028,339 @@ end
             </div>
         </section>
 
-                <!-- TO-BE view (filled in Step 10) -->
+                <!-- TO-BE view -->
         <section id="view-tobe" class="view-section">
-            <div class="diagram-container" style="padding:60px; color:var(--text-dim); font-weight:300;">
-                <i class="fa-solid fa-clock" style="color:var(--hmnd-blue); font-size:22px; display:block; margin-bottom:12px;"></i>
-                TO-BE content for Calendar will be added in the next batch (Step 10).
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+autonumber
+
+box rgb(248, 250, 252) External
+participant EXT as Funds / partners / contacts
+end
+
+box rgb(248, 250, 252) Systems
+participant EML as Email
+participant LKD as LinkedIn
+participant WAP as WhatsApp
+participant TGM as Telegram
+participant SLK as Slack
+participant HBS as HubSpot
+participant GCL as Google Calendar
+participant CAL as CEO calendar analytics
+participant FRK as Fundraising calendar
+participant FFL as Fireflies
+participant CHK as Task Orchestrator / Daily Checklist
+end
+
+box rgb(238, 242, 255) AI Layer
+participant CLM as Calendar
+end
+
+box rgb(254, 242, 242) Internal
+participant COO as CEO Office
+end
+
+Note over CLM: Calendar coordinates slots, bookings, reminders, classification, fundraising routing and pre-meeting prep
+Note over CLM: Auto-classifies meetings [investor / partner / internal / media], tracks pending bookings and delivers CEO-time analytics
+
+loop Daily — coordinate meetings and tasks
+    par Meeting signal monitoring
+        CLM->>EML: Check emails for slots, invites, follow-ups
+        EML-->>CLM: New meeting requests and replies
+        CLM->>LKD: Check LinkedIn messages about meetings
+        LKD-->>CLM: New LinkedIn messages
+        CLM->>WAP: Check WhatsApp for slot exchanges
+        WAP-->>CLM: New WhatsApp messages
+        CLM->>TGM: Check Telegram for meeting messages / voice
+        TGM-->>CLM: New Telegram messages
+        CLM->>SLK: Check internal meeting agreements in Slack
+        SLK-->>CLM: New Slack updates
+    and Calendar monitoring
+        CLM->>GCL: Check upcoming and current meetings
+        GCL-->>CLM: Meetings, changes, pending bookings
+        CLM->>FRK: Check fundraising meetings and next steps
+        FRK-->>CLM: Meeting history and pending follow-up
+    end
+
+    CLM->>CLM: Determine meeting event [new / slots proposed / booking pending / confirmed / reminder / reschedule / post-meeting]
+    CLM->>CLM: Determine meeting entity, channel and urgency
+end
+
+loop Per meeting signal
+    alt Thread / prior context needed
+        CLM->>HBS: Search prior thread and templates
+        HBS-->>CLM: History, templates, prior touches
+    else Context clear
+        CLM->>CLM: Use current context
+    end
+
+    CLM->>CLM: Action type [reply with slots / confirm / reminder / reschedule / add / log / brief prep / post-meeting follow-up]
+    CLM->>CLM: Suggested owner [CEO Office / Alina / Dima / Yohann]
+    CLM->>CLM: Due, priority, dependency, external-reply needed?
+
+    CLM->>CHK: Create / update task [meeting entity / action type / owner / due / dependency / source]
+    CHK-->>CLM: Task created / updated
+
+    alt Duplicate booking / follow-up
+        CLM->>CHK: Check related open tasks
+        CHK-->>CLM: Duplicates / related / recurring found
+        CLM->>CHK: Merge or correct task
+        CHK-->>CLM: Tasks normalised
+    else No duplicates
+        CLM->>CLM: Confirm new task
+    end
+
+    alt Send slots / reply
+        alt Channel = Email
+            CLM->>EML: Send slots / reminder / follow-up
+            EML-->>EXT: Message sent
+        else Channel = LinkedIn
+            CLM->>LKD: Send slots / reminder / follow-up
+            LKD-->>EXT: Message sent
+        else Channel = Telegram / WhatsApp
+            CLM->>CLM: Draft message for manual send
+        end
+        CLM->>CHK: Update task [response sent / waiting reply]
+    else Meeting confirmed
+        CLM->>GCL: Create / update meeting
+        GCL-->>CLM: Calendar updated
+        CLM->>CHK: Update task [confirmed / calendar updated]
+    end
+
+    alt Booking pending and no reply
+        CLM->>CLM: Check gap and booking SLA
+        alt Reminder needed (Email)
+            CLM->>EML: Send meeting reminder
+            EML-->>EXT: Reminder sent
+            CLM->>CHK: Update task [reminder sent]
+        else Follow-up via LinkedIn / messenger
+            CLM->>LKD: Send meeting reminder
+            LKD-->>EXT: Reminder sent
+            CLM->>CHK: Update task [follow-up sent]
+        end
+    else Booking confirmed
+        CLM->>CLM: Record confirmed booking
+    end
+end
+
+loop Daily classification and analytics
+    CLM->>GCL: Export CEO meetings for period
+    GCL-->>CLM: Meeting list
+    CLM->>CLM: Classify meetings [investor / partner / internal / media]
+    CLM->>CAL: Update CEO calendar analytics
+    CAL-->>CLM: Analytics by meeting type and time updated
+    CLM->>CLM: Detect overload, slot conflicts and inefficient windows
+    CLM-->>COO: Calendar analytics snapshot [types / load / free windows / optimization signals]
+end
+
+loop Per external meeting
+    CLM->>GCL: Check external meeting
+    GCL-->>CLM: Meeting details [org, person, date, attendees]
+
+    CLM->>CLM: Determine external meeting type
+    alt Type = fundraising / investor
+        CLM->>FRK: Auto-add to fundraising contour
+        FRK-->>CLM: Meeting added to fundraising loop
+    else Not fundraising
+        CLM->>CLM: Keep in main calendar contour
+    end
+
+    CLM->>CHK: Create / update related tasks [brief prep / confirm owner / post-meeting follow-up]
+    CHK-->>CLM: Related meeting tasks updated
+end
+
+loop Upcoming external meeting prep
+    CLM->>GCL: Find upcoming external meetings
+    GCL-->>CLM: Upcoming meeting list
+    CLM->>HBS: Collect comms history and prior touches
+    HBS-->>CLM: Thread and touch context
+    CLM->>FRK: Collect summary, next step and fundraising context
+    FRK-->>CLM: Fundraising interaction history
+
+    CLM->>CLM: Build pre-meeting draft [who / why / history / open questions / next-step hypothesis]
+    CLM->>CHK: Create prep tasks and brief-generation items
+    CHK-->>CLM: Prep tasks updated
+    CLM-->>COO: Upcoming meetings pack [external meetings / draft briefs / prep actions]
+end
+
+loop After a fundraising meeting
+    CLM->>FFL: Check transcript availability
+    FFL-->>CLM: Transcript available or missing
+
+    alt Transcript available
+        CLM->>CLM: Build post-meeting summary, follow-up and next step
+    else Transcript missing
+        CLM->>CLM: Build post-meeting draft from calendar context and notes
+    end
+
+    CLM->>CHK: Create post-meeting tasks [summary / follow-up / next step / owner confirmation]
+    CHK-->>CLM: Post-meeting tasks updated
+    CLM->>FRK: Update fundraising contour [summary / pending actions / next step]
+    FRK-->>CLM: Fundraising contour updated
+end
+
+loop Ack / status / execution control
+    CLM->>CHK: Check open meeting tasks
+    CHK-->>CLM: Open tasks, ack, due, status, dependencies, overdue, no owner
+
+    alt No ack or owner not confirmed
+        CLM->>CHK: Mark pending ack and escalate
+        CHK-->>CLM: Escalation updated
+        CLM-->>COO: Alert [no ack / owner not confirmed]
+    else Ack received
+        CLM->>CLM: Mark task as in execution
+    end
+
+    alt Dependency or blocker
+        CLM->>CHK: Mark blocked / waiting dependency
+        CHK-->>CLM: Status blocked updated
+        CLM-->>COO: Alert [blocked / waiting dependency]
+    else No blocker
+        CLM->>CLM: Continue execution control
+    end
+
+    alt External reply required
+        CLM->>HBS: Check reply / follow-up / confirmation fact
+        HBS-->>CLM: Reply sent / no reply / awaiting confirmation
+        CLM->>CHK: Update task status
+        CHK-->>CLM: Status updated
+    else Internal only
+        CLM->>CLM: Internal execution control
+    end
+end
+
+loop Daily and weekly meeting-task sync
+    CLM->>CHK: Aggregate meeting tasks from all sources
+    CHK-->>CLM: Unified open task list, overdue, no owner, pending ack, recurring
+
+    CLM->>CLM: Check tails [pending booking / missing reminder / no owner / duplicates / overdue follow-up]
+    CLM->>GCL: Sync calendar
+    CLM->>FRK: Sync fundraising meetings
+    CLM->>CLM: Build CEO-time optimization recommendations
+    CLM-->>COO: Calendar control pack [meeting tasks / upcoming externals / booking risks / fundraising meetings / time optimization]
+end
+                </pre>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-flag-checkered"></i> 1. Process Goal (TO-BE)</div>
+                <p class="text-block">Calendar is a single agent that <strong>runs the operational meeting loop</strong>: coordinates slots, chases unconfirmed bookings, classifies meetings by type, auto-routes fundraising meetings into FRK, prepares upcoming briefs and delivers CEO-time analytics with optimization recommendations.</p>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-layer-group"></i> 2. Process description</div>
+                <div class="timeline">
+                    <div class="step">
+                        <span class="step-owner">Calendar</span>
+                        <h4>A. Auto signal monitoring and event detection</h4>
+                        <p>Monitors Email, LinkedIn, WhatsApp, Telegram, Slack and both calendars in parallel, then classifies every signal into a meeting event (new / slots / pending / confirmed / reminder / reschedule / post-meeting) with entity, channel and urgency.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Calendar → CHK</span>
+                        <h4>B. Per signal: action type, owner, dedup task</h4>
+                        <p>Chooses action type and owner (CEO Office / Alina / Dima / Yohann), creates or updates the meeting task, and merges duplicates / recurring items automatically.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Calendar</span>
+                        <h4>C. Send slots / confirmations</h4>
+                        <p>Sends slots, reminders and follow-ups via Email or LinkedIn; for Telegram / WhatsApp drafts the message for manual send. Updates calendar on confirmation and keeps task status in sync.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Calendar</span>
+                        <h4>D. Booking SLA — reminder or follow-up</h4>
+                        <p>On pending bookings without reply, checks gap and emits a reminder (Email) or a follow-up (LinkedIn / messenger). Records confirmed bookings.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Calendar → COO</span>
+                        <h4>E. Daily classification + analytics snapshot</h4>
+                        <p>Classifies meetings (investor / partner / internal / media), updates CEO calendar analytics and detects overload, conflicts and inefficient windows — delivered as a calendar analytics snapshot.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Calendar → FRK</span>
+                        <h4>F. Auto-routing fundraising externals</h4>
+                        <p>For every external meeting determines the type: fundraising / investor events are auto-added to the fundraising contour; others stay in the main calendar. Related prep / follow-up tasks are spawned in CHK.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Calendar → COO</span>
+                        <h4>G. Upcoming meetings pack</h4>
+                        <p>For upcoming external meetings collects comms history from HubSpot and fundraising context from FRK, builds a pre-meeting draft (who / why / history / open questions / next-step hypothesis) and delivers the pack with prep tasks.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Calendar</span>
+                        <h4>H. Post-meeting + ack control + daily / weekly sync</h4>
+                        <p>Builds post-meeting summary and tasks, runs ack / blocked / reply-fact control, and produces a daily-and-weekly calendar control pack with meeting tasks, booking risks, upcoming externals and CEO-time optimization recommendations.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-users"></i> 3. Roles &amp; responsibility (RACI)</div>
+                <div class="grid-3">
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="role-info"><h5>CEO Office</h5><p>Consumes analytics snapshots, upcoming meetings packs, alerts and the calendar control pack. Approves escalations.</p></div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                        <div class="role-info"><h5>Calendar</h5><p>Auto-coordinates slots, classifies meetings, routes fundraising events, prepares briefs and drives ack / status control.</p></div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-database"></i></div>
+                        <div class="role-info"><h5>GCL / FRK / CAL / CHK</h5><p>Auto-updated stores — calendar events, fundraising contour, CEO-time analytics and meeting tasks.</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-server"></i> 4. Systems (TO-BE architecture)</h4>
+                    <ul>
+                        <li><strong>Calendar agent</strong> — monitoring, classification, routing, prep, analytics.</li>
+                        <li><strong>Email / LinkedIn / WhatsApp / Telegram / Slack</strong> — meeting signal channels.</li>
+                        <li><strong>HubSpot</strong> — prior thread and comms history.</li>
+                        <li><strong>Google Calendar + Fundraising calendar</strong> — events, routing target.</li>
+                        <li><strong>CEO calendar analytics (CAL)</strong> — auto-updated by type and time.</li>
+                        <li><strong>Fireflies</strong> — post-meeting transcripts.</li>
+                        <li><strong>Task Orchestrator / Daily Checklist (CHK)</strong> — meeting tasks, prep and follow-up queues.</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-file-contract"></i> 5. Artifacts</h4>
+                    <ul>
+                        <li><strong>Calendar analytics snapshot</strong> — types / load / free windows / optimization signals.</li>
+                        <li><strong>Upcoming meetings pack</strong> — list of externals + pre-meeting drafts + prep actions.</li>
+                        <li><strong>Meeting tasks</strong> — entity, action, owner, due, dependency, source.</li>
+                        <li><strong>Post-meeting tasks</strong> — summary, follow-up, next step, owner confirmation.</li>
+                        <li><strong>Calendar control pack</strong> — open tasks, booking risks, fundraising meetings, time optimization.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-chart-pie"></i> 6. Metrics (Target)</div>
+                <table class="custom-table">
+                    <thead><tr><th>Metric</th><th>Target</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="highlight-text">Slot coordination</span></td><td>Agent-driven — drafts or sends on every booking signal.</td></tr>
+                        <tr><td><span class="highlight-text">Meeting classification</span></td><td>Automatic &amp; consistent — investor / partner / internal / media tagged on every event.</td></tr>
+                        <tr><td><span class="highlight-text">Fundraising routing</span></td><td>Real-time — external fundraising meetings land in FRK without manual copy.</td></tr>
+                        <tr><td><span class="highlight-text">Pre-meeting prep</span></td><td>Draft brief ready for every upcoming external meeting.</td></tr>
+                        <tr><td><span class="highlight-text">CEO time analytics</span></td><td>Actionable — overload, conflicts and inefficient windows surfaced with optimization tips.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section-box" style="background: transparent; border: none; padding: 0; box-shadow: none;">
+                <div class="section-title"><i class="fa-solid fa-rocket"></i> 7. Initiative (automation point)</div>
+                <button class="initiative-card" onclick="openDrawer()">
+                    <div class="init-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                    <div class="init-text">
+                        <h5>Calendar — Meeting Orchestration &amp; CEO Time Analytics</h5>
+                        <p>A single agent that coordinates slots and bookings, classifies meetings, routes fundraising events, prepares upcoming briefs and delivers actionable CEO-time analytics with optimization recommendations.</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-right init-arrow"></i>
+                </button>
             </div>
         </section>
     </main>
@@ -1043,8 +1371,48 @@ end
         <div class="drawer-head">
             <button class="drawer-close" onclick="closeDrawer()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
             <span class="drawer-badge"><i class="fa-solid fa-bolt"></i> Module 05</span>
-            <h2 class="drawer-title">Calendar initiative</h2>
-            <p class="drawer-subtitle">Drawer content will be filled in Step 10 when the TO-BE view is added.</p>
+            <h2 class="drawer-title">Calendar — Meeting Orchestration &amp; CEO Time Analytics</h2>
+            <p class="drawer-subtitle">Coordinates slots, tracks unconfirmed bookings, classifies meetings, routes fundraising events, prepares upcoming briefs and delivers actionable CEO-time analytics.</p>
+            <div class="drawer-meta">
+                <span class="drawer-chip effect"><i class="fa-solid fa-bullseye"></i> Time optimization</span>
+                <span class="drawer-chip date"><i class="fa-solid fa-calendar-day"></i> May 13, 2026</span>
+                <span class="drawer-chip"><i class="fa-solid fa-hashtag"></i> № 05</span>
+            </div>
+        </div>
+        <div class="drawer-body">
+            <h4 class="drawer-section-title">What this module does</h4>
+            <p style="font-size:14px; color:var(--text-main); line-height:1.65; margin:0 0 24px; font-weight:300;">
+                Calendar runs the operational meeting loop: it coordinates slots, chases unconfirmed bookings, classifies meetings by type and routes fundraising meetings into a separate loop. It delivers the upcoming external-meeting list, prep drafts and analytics of how CEO time is spent — with optimisation recommendations.
+            </p>
+
+            <h4 class="drawer-section-title">User stories</h4>
+            <ol class="story-list">
+                <li><span>The agent helps negotiate slots, coordinates meetings and reminds on unconfirmed bookings — no manual back-and-forth.</span></li>
+                <li><span>Meetings are auto-classified: investor, partner, internal, media — no manual calendar tagging.</span></li>
+                <li><span>External fundraising meetings auto-route into a dedicated fundraising loop — no manual copy-across.</span></li>
+                <li><span>Get a list of nearest external meetings with draft prep materials — briefing in advance.</span></li>
+                <li><span>See CEO-calendar analytics by meeting type and time — to evaluate where management focus goes.</span></li>
+            </ol>
+
+            <h4 class="drawer-section-title">Delivery requirements</h4>
+            <ul class="req-list">
+                <li><i class="fa-solid fa-check"></i> Multi-channel meeting signal monitoring: Email, LinkedIn, WhatsApp, Telegram, Slack, Google Calendar, fundraising calendar.</li>
+                <li><i class="fa-solid fa-check"></i> Meeting classifier: investor / partner / internal / media.</li>
+                <li><i class="fa-solid fa-check"></i> Booking SLA and reminder engine with channel-appropriate drafts.</li>
+                <li><i class="fa-solid fa-check"></i> Pre-meeting prep pipeline: history, theses, open questions, next-step hypothesis.</li>
+                <li><i class="fa-solid fa-check"></i> CEO-time analytics with overload / conflict / inefficient-window detection and optimization suggestions.</li>
+            </ul>
+
+            <div style="margin-top: 28px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="https://docs.google.com/spreadsheets/d/1QiCLAk5O0tma55ZGNQyAXRNfP-oxS0OC9Y8H_b4SMvo/edit?usp=sharing" target="_blank" rel="noopener"
+                   style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--hmnd-blue); color:#fff; font-weight:500; font-size:13px; text-decoration:none;">
+                    <i class="fa-solid fa-file-lines"></i> Open full strategy
+                </a>
+                <button onclick="closeDrawer()"
+                        style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--surface); color:var(--hmnd-navy); font-family:inherit; font-weight:500; font-size:13px; border:1px solid var(--border); cursor:pointer;">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </button>
+            </div>
         </div>
     </aside>
 
