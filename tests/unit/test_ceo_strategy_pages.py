@@ -186,3 +186,33 @@ class TestArchitecturePage:
             "Infrastructure (Foundation)",
         ]:
             assert label in html, f"missing architecture layer: {label}"
+
+
+class TestMermaidSafety:
+    """Mermaid 10.9.5 treats some characters as statement separators inside
+    message and note labels. These tests guard against regressions where
+    unsafe characters leak back into <pre class="mermaid"> blocks."""
+
+    def _extract_mermaid_blocks(self, name: str) -> list[str]:
+        html = (PAGES_DIR / name).read_text(encoding="utf-8")
+        return re.findall(r'<pre class="mermaid">(.*?)</pre>', html, re.DOTALL)
+
+    @pytest.mark.parametrize("page_name", MODULE_PAGES)
+    def test_no_semicolons_inside_mermaid(self, page_name):
+        for block in self._extract_mermaid_blocks(page_name):
+            assert ";" not in block, (
+                f"semicolon inside mermaid block in {page_name} — mermaid 10.x "
+                "treats ';' as statement separator and fails to parse"
+            )
+
+    @pytest.mark.parametrize("page_name", MODULE_PAGES)
+    def test_no_gt_lt_entities_inside_mermaid(self, page_name):
+        for block in self._extract_mermaid_blocks(page_name):
+            assert "&gt;" not in block, (
+                f"'&gt;' inside mermaid block in {page_name} — decodes to "
+                "'>' in the browser and trips the sequence-diagram parser"
+            )
+            assert "&lt;" not in block, (
+                f"'&lt;' inside mermaid block in {page_name}"
+            )
+
