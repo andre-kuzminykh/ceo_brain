@@ -1032,10 +1032,137 @@ end
             </div>
         </section>
 
-        <!-- TO-BE view (mermaid + sections + initiative will be added in Step 2a and 2b) -->
+        <!-- TO-BE view -->
         <section id="view-tobe" class="view-section">
-            <!-- TO-BE mermaid diagram -->
-            <!-- TO-BE sections: goal, timeline, roles, systems, artifacts, metrics, initiative -->
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+autonumber
+
+box rgb(248, 250, 252) External
+participant EXT as Funds / partners / contacts
+end
+
+box rgb(248, 250, 252) Systems
+participant HBS as HubSpot
+participant FST as Fundraising Status
+participant NIN as NEW Intros + Banks
+participant FLW as Followers
+participant LID as Investor file
+participant WSH as Wishlists &amp; outreach
+participant GCL as Google Calendar
+participant FRK as Fundraising calendar
+participant DTR as Data Room
+participant CON as Confluence
+participant PTB as PitchBook
+participant LKD as LinkedIn
+participant TGM as Telegram
+participant SLK as Slack
+end
+
+box rgb(238, 242, 255) AI Layer
+participant AIM as AI Memory
+end
+
+box rgb(254, 242, 242) Internal
+participant COO as CEO Office
+participant RES as Research team
+end
+
+Note over COO: CEO Office includes Artem, Alina and the research team
+Note over AIM: AI Memory links context across funds, companies, people, meetings, threads and documents into one memory graph
+Note over AIM: AI Memory delivers instant briefs, touch history, related materials, current stage, last touch, probable next step and warm-intro paths
+
+loop For every context request [fund / company / person / meeting / thread / document]
+    COO->>AIM: Context request [entity / goal / request type]
+
+    AIM->>AIM: Resolve entity and existing links
+    AIM->>AIM: Check existing memory and related objects
+
+    par Collect CRM and statuses
+        AIM->>HBS: Search history by fund, contact, company or thread
+        HBS-->>AIM: Email / thread / template / contact history
+        AIM->>FST: Look up overall fund status
+        FST-->>AIM: Stage, next step, date, waiting feedback
+        AIM->>NIN: Look up early stage
+        NIN-->>AIM: Interest, date, follow-up, intro
+        AIM->>FLW: Look up active stage
+        FLW-->>AIM: Status, owner, replies, follow-up
+    and Collect meetings and documents
+        AIM->>GCL: Search upcoming and past meetings
+        GCL-->>AIM: Meeting history
+        AIM->>FRK: Look up summary, owner and next step
+        FRK-->>AIM: Fundraising meeting history
+        AIM->>DTR: Look up NDA / Data Room / access status
+        DTR-->>AIM: Access, status, related materials
+        AIM->>LID: Look up past communication and touches
+        LID-->>AIM: Investor history
+    and Collect external context
+        AIM->>LKD: Search profile, connections and current role
+        LKD-->>AIM: Profile, connections, current role
+        AIM->>PTB: Look up fund data
+        PTB-->>AIM: Investments, background, exits, thesis
+    and Collect internal knowledge context
+        AIM->>CON: Search old briefs, templates, one-pagers and how-tos
+        CON-->>AIM: Internal materials found
+        AIM->>TGM: Search chats and voice messages
+        TGM-->>AIM: Internal context from Telegram
+        AIM->>SLK: Search work conversations
+        SLK-->>AIM: Internal context from Slack
+        AIM->>WSH: Search wishlist and outreach
+        WSH-->>AIM: Outreach history, past touches and relevance
+    end
+
+    AIM->>AIM: Link objects [fund / company / person / meeting / thread / document]
+    AIM->>AIM: Build unified memory graph
+    AIM->>AIM: Determine last touch, current stage, probable next step
+    AIM->>AIM: Find related NDAs, Data Room, prior requests and similar materials
+    AIM->>AIM: Tag materials [current / possibly outdated / needs check]
+    AIM->>AIM: Build probable warm-intro paths
+
+    alt Context insufficient or data conflict
+        AIM->>RES: Targeted research request [gap / goal / deadline / what to verify]
+        alt Internal research needed
+            RES->>HBS: Extra search of history, threads and templates
+            HBS-->>RES: Communication history and materials
+            RES->>TGM: Manual search across chats and voice messages
+            TGM-->>RES: Extra context
+            RES->>SLK: Manual search in work conversations
+            SLK-->>RES: Extra context
+            RES->>CON: Search old briefs, templates and similar materials
+            CON-->>RES: Materials found
+        else External research needed
+            RES->>LKD: Search profile, connections and current role
+            LKD-->>RES: Extra external context
+            RES->>PTB: Look up fund data
+            PTB-->>RES: Investments, exits, thesis, background
+            RES->>GCL: Check related meetings and participants
+            GCL-->>RES: Meeting and participant history
+        end
+        RES-->>AIM: Research snapshot [findings / materials / links / quality tags]
+        AIM->>AIM: Update memory graph and summary
+    else Context sufficient
+        AIM->>AIM: Use already gathered memory
+    end
+
+    par Produce AI Memory outputs
+        AIM-->>COO: Instant brief [who / what happened / touch history / key facts]
+    and
+        AIM-->>COO: Pre-meeting brief [fund / person / comms history / prior contacts / risks / theses]
+    and
+        AIM-->>COO: Document context snapshot [NDA / Data Room / prior requests / access status]
+    and
+        AIM-->>COO: Related materials snapshot [old briefs / templates / similar materials / freshness tags]
+    and
+        AIM-->>COO: Decision snapshot [last touch / current stage / probable next step / warm-intro paths]
+    end
+
+    AIM->>AIM: Persist new touch, summary and links into unified memory
+end
+                </pre>
+            </div>
+
+            <!-- TO-BE sections + initiative will be added in Step 2b -->
         </section>
     </main>
 
