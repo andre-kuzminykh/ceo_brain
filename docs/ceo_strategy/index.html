@@ -344,6 +344,7 @@
             color: inherit;
             width: 100%;
             position: relative;
+            text-decoration: none;
         }
         .tile:hover {
             transform: translateY(-3px);
@@ -479,6 +480,7 @@
             color: inherit;
             width: 100%;
             border-left: none;
+            text-decoration: none;
         }
         .road-card:hover {
             border-color: var(--hmnd-blue);
@@ -849,36 +851,16 @@
         </a>
 
         <div class="nav-label">AI Modules</div>
-        <a href="#" class="nav-item" onclick="openModule('ai_memory'); return false;">
-            <i class="fa-solid fa-brain"></i> AI Memory
-        </a>
-        <a href="#" class="nav-item" onclick="openModule('performance'); return false;">
-            <i class="fa-solid fa-gauge-high"></i> Performance
-        </a>
-        <a href="#" class="nav-item" onclick="openModule('tasks'); return false;">
-            <i class="fa-solid fa-list-check"></i> Tasks
-        </a>
-        <a href="#" class="nav-item" onclick="openModule('notes'); return false;">
-            <i class="fa-solid fa-note-sticky"></i> Notes
-        </a>
-        <a href="#" class="nav-item" onclick="openModule('calendar'); return false;">
-            <i class="fa-solid fa-calendar-days"></i> Calendar
-        </a>
-        <a href="#" class="nav-item" onclick="openModule('email'); return false;">
-            <i class="fa-solid fa-envelope"></i> Email
-        </a>
-        <a href="#" class="nav-item" onclick="openModule('docs'); return false;">
-            <i class="fa-solid fa-file-lines"></i> Docs
-        </a>
-        <a href="#" class="nav-item" onclick="openModule('tables'); return false;">
-            <i class="fa-solid fa-table"></i> Tables
-        </a>
-        <a href="#" class="nav-item" onclick="openModule('slides'); return false;">
-            <i class="fa-solid fa-chalkboard"></i> Slides
-        </a>
-        <a href="#" class="nav-item" onclick="openModule('reports'); return false;">
-            <i class="fa-solid fa-chart-column"></i> Reports
-        </a>
+        <a href="ai-memory.html" class="nav-item"><i class="fa-solid fa-brain"></i> AI Memory</a>
+        <a href="performance.html" class="nav-item"><i class="fa-solid fa-gauge-high"></i> Performance</a>
+        <a href="tasks.html" class="nav-item"><i class="fa-solid fa-list-check"></i> Tasks</a>
+        <a href="notes.html" class="nav-item"><i class="fa-solid fa-note-sticky"></i> Notes</a>
+        <a href="calendar.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Calendar</a>
+        <a href="email.html" class="nav-item"><i class="fa-solid fa-envelope"></i> Email</a>
+        <a href="docs.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Docs</a>
+        <a href="tables.html" class="nav-item"><i class="fa-solid fa-table"></i> Tables</a>
+        <a href="slides.html" class="nav-item"><i class="fa-solid fa-chalkboard"></i> Slides</a>
+        <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-column"></i> Reports</a>
 
         <div class="nav-label">Resources</div>
         <a href="https://docs.google.com/spreadsheets/d/1QiCLAk5O0tma55ZGNQyAXRNfP-oxS0OC9Y8H_b4SMvo/edit?usp=sharing" target="_blank" rel="noopener" class="nav-item">
@@ -1305,10 +1287,16 @@
             return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
 
+        const slugMap = {
+            ai_memory: 'ai-memory', performance: 'performance', tasks: 'tasks',
+            notes: 'notes', calendar: 'calendar', email: 'email',
+            docs: 'docs', tables: 'tables', slides: 'slides', reports: 'reports'
+        };
+
         function renderGrid() {
             const grid = document.getElementById('module-grid');
             grid.innerHTML = MODULES.map(m => `
-                <button class="tile" onclick="openModule('${m.id}')" aria-label="${m.title}">
+                <a class="tile" href="${slugMap[m.id]}.html" aria-label="${m.title}">
                     <div class="tile-top">
                         <div class="tile-icon"><i class="fa-solid ${m.icon}"></i></div>
                         <span class="tile-num">№ ${String(m.number).padStart(2, '0')}</span>
@@ -1319,7 +1307,7 @@
                         <span class="tile-effect">${m.effect}</span>
                         <span class="tile-date">${formatDate(m.deadline)}</span>
                     </div>
-                </button>
+                </a>
             `).join('');
         }
 
@@ -1327,7 +1315,7 @@
             const root = document.getElementById('roadmap-timeline');
             root.innerHTML = MODULES.map(m => `
                 <div class="road-item">
-                    <button class="road-card" onclick="openModule('${m.id}')">
+                    <a class="road-card" href="${slugMap[m.id]}.html">
                         <span class="road-date">${formatDate(m.deadline)}</span>
                         <div class="road-icon"><i class="fa-solid ${m.icon}"></i></div>
                         <div class="road-body">
@@ -1335,7 +1323,7 @@
                             <p>${m.shortDesc}</p>
                         </div>
                         <i class="fa-solid fa-chevron-right road-chevron"></i>
-                    </button>
+                    </a>
                 </div>
             `).join('');
         }
