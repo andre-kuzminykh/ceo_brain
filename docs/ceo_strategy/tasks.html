@@ -700,7 +700,9 @@
         aside.sidebar.collapsed .nav-label,
         aside.sidebar.collapsed .nav-item > :not(i) { display: none; }
         aside.sidebar.collapsed .logo { justify-content: center; }
-        aside.sidebar.collapsed .nav-item { justify-content: center; padding: 10px 6px; gap: 0; }
+        aside.sidebar.collapsed .nav-item { justify-content: center; padding: 10px 6px; gap: 0; font-size: 0; }
+        aside.sidebar.collapsed .nav-item i { font-size: 16px; width: 16px; text-align: center; }
+        aside.sidebar.collapsed .nav-item i::after { content: ""; display: none; }
         aside.sidebar.collapsed .nav-label { margin: 0; padding: 0; }
 
         .sidebar-toggle {
@@ -751,7 +753,8 @@
             aside.sidebar.collapsed .nav-label,
             aside.sidebar.collapsed .nav-item > :not(i) { display: inline; }
             aside.sidebar.collapsed .logo { justify-content: flex-start; }
-            aside.sidebar.collapsed .nav-item { justify-content: flex-start; padding: 10px 14px; gap: 12px; }
+            aside.sidebar.collapsed .nav-item { justify-content: flex-start; padding: 10px 14px; gap: 12px; font-size: 13px; }
+            aside.sidebar.collapsed .nav-item i { font-size: 13px; width: 16px; }
             aside.sidebar.collapsed .sidebar-toggle { right: 14px; top: 14px; transform: none; }
             aside.sidebar.collapsed .sidebar-toggle i { transform: none; }
             .sidebar-toggle i::before { content: "\f00d"; }  /* xmark on mobile (close) */
