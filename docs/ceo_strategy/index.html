@@ -1470,7 +1470,7 @@
             const root = document.getElementById('roadmap-timeline');
             root.innerHTML = MODULES.map(m => `
                 <div class="road-item">
-                    <a class="road-card" href="${slugMap[m.id]}.html">
+                    <button type="button" class="road-card" onclick="openModule('${m.id}')">
                         <span class="road-date">${formatDate(m.deadline)}</span>
                         <div class="road-icon"><i class="fa-solid ${m.icon}"></i></div>
                         <div class="road-body">
@@ -1478,7 +1478,7 @@
                             <p>${m.shortDesc}</p>
                         </div>
                         <i class="fa-solid fa-chevron-right road-chevron"></i>
-                    </a>
+                    </button>
                 </div>
             `).join('');
         }
