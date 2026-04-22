@@ -1037,11 +1037,315 @@ end
             </div>
         </section>
 
-                <!-- TO-BE view (filled in Step 16) -->
+                <!-- TO-BE view -->
         <section id="view-tobe" class="view-section">
-            <div class="diagram-container" style="padding:60px; color:var(--text-dim); font-weight:300;">
-                <i class="fa-solid fa-clock" style="color:var(--hmnd-blue); font-size:22px; display:block; margin-bottom:12px;"></i>
-                TO-BE content for Tables will be added in the next batch (Step 16).
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+autonumber
+
+box rgb(248, 250, 252) External
+participant EXT as Funds / partners / contacts
+end
+
+box rgb(248, 250, 252) Systems
+participant EML as Email
+participant LKD as LinkedIn
+participant TGM as Telegram
+participant WAP as WhatsApp
+participant SLK as Slack
+participant HBS as HubSpot
+participant FST as Fundraising Status
+participant NIN as NEW Intros + Banks
+participant FLW as Followers
+participant LID as Investor file
+participant WSH as Wishlists &amp; outreach
+participant GCL as Google Calendar
+participant FRK as Fundraising calendar
+participant PTB as PitchBook
+end
+
+box rgb(238, 242, 255) AI Layer
+participant TBL as Tables
+end
+
+box rgb(254, 242, 242) Internal
+participant COO as CEO Office
+end
+
+Note over TBL: Tables auto-prefills and updates trackers, CRM, wishlists and other structured records
+Note over TBL: Syncs fields across registers, finds duplicates / gaps / desync and proposes corrective updates and verification flags
+
+loop Daily — structured records updates
+    par Monitor change sources
+        TBL->>EML: Check emails and replies
+        EML-->>TBL: New emails and follow-ups
+        TBL->>LKD: Check LinkedIn
+        LKD-->>TBL: New messages
+        TBL->>TGM: Check Telegram
+        TGM-->>TBL: Messages and asks
+        TBL->>WAP: Check WhatsApp
+        WAP-->>TBL: Messages
+        TBL->>SLK: Check work statuses
+        SLK-->>TBL: New updates
+    and Monitor meetings and summaries
+        TBL->>GCL: Check calendar
+        GCL-->>TBL: Meetings and changes
+        TBL->>FRK: Check fundraising calendar
+        FRK-->>TBL: Summary, next step, owner
+    and Monitor current statuses
+        TBL->>FST: Check overall fundraising status
+        FST-->>TBL: Stage, date, next step
+        TBL->>NIN: Check new intros
+        NIN-->>TBL: Interest, date, follow-up
+        TBL->>FLW: Check followers
+        FLW-->>TBL: Stages, replies, meetings
+        TBL->>LID: Check investor file
+        LID-->>TBL: Investor history and communications
+        TBL->>WSH: Check wishlist and outreach
+        WSH-->>TBL: Campaign and reply statuses
+    end
+
+    TBL->>TBL: Decide which registry to update and which fields to prefill
+    TBL->>TBL: Mapping signal-to-record updates [entity / registry / fields / values / confidence]
+end
+
+loop Per signal, meeting or status change
+    TBL->>TBL: Determine entity [fund / contact / meeting / outreach / investor]
+    TBL->>TBL: Build suggested record updates [which register / which fields / which values]
+
+    alt New fund or early stage
+        TBL->>NIN: Prefill / update [fund / contact / date / interest / reminder / follow-up]
+        NIN-->>TBL: Record created / updated
+    else Active stage, meeting or follow-up
+        TBL->>FLW: Prefill / update [status / owner / follow-up / date / waiting feedback]
+        FLW-->>TBL: Record created / updated
+    end
+
+    TBL->>FST: Prefill overall status [stage / last touch / next action / waiting feedback]
+    FST-->>TBL: Overall status updated
+
+    alt Important investor communication
+        TBL->>LID: Prefill investor history
+        LID-->>TBL: Investor history updated
+    end
+
+    alt Source = meeting or summary
+        TBL->>FRK: Check summary and owner
+        FRK-->>TBL: Meeting history
+        TBL->>FST: Update status post-meeting
+        TBL->>FLW: Update follow-up and owner
+    end
+
+    TBL-->>COO: Suggested register updates [registry / fields / values / confidence / source]
+end
+
+loop Cross-register sync
+    TBL->>FST: Sync overall status
+    FST-->>TBL: Current stages and next steps
+    TBL->>NIN: Sync early stages
+    NIN-->>TBL: Current records
+    TBL->>FLW: Sync active stages
+    FLW-->>TBL: Current records
+    TBL->>LID: Sync investor history
+    LID-->>TBL: Current records
+    TBL->>WSH: Sync outreach and wishlist
+    WSH-->>TBL: Current campaign and touch statuses
+
+    TBL->>TBL: Find duplicates, missing fields and status desync
+    TBL->>TBL: Build suggested corrections [what to update / where is the conflict / what to fill]
+
+    alt Duplicates or data conflict
+        TBL->>FST: Fix overall status
+        TBL->>NIN: Fix early stage
+        TBL->>FLW: Fix active stage
+        TBL->>LID: Fix investor history
+        TBL->>WSH: Fix outreach / wishlist records
+        TBL-->>COO: Data sync alert [duplicates / conflicts / missing fields / suggested fixes]
+    else Data aligned
+        TBL->>TBL: Confirm integrity of structured records
+        TBL-->>COO: Register sync clean [no critical conflicts]
+    end
+end
+
+loop Wishlist prep and maintenance
+    alt Active conference or outreach campaign
+        TBL->>WSH: Create / update wishlist
+        WSH-->>TBL: Wishlist opened
+
+        par Attendees
+            TBL->>LKD: Collect attendees and profiles
+            LKD-->>TBL: Profiles, photos, contacts
+        and Fund data
+            TBL->>PTB: Collect fund data
+            PTB-->>TBL: Investments, background, thesis
+        and Prior touches
+            TBL->>HBS: Search prior contacts and communications
+            HBS-->>TBL: Communication history
+        end
+
+        TBL->>TBL: Prefill wishlist cards [contact / fund / role / relevance / prior touches]
+        TBL->>TBL: Preliminary relevance and priority labels
+
+        alt AI / robotics investments need manual verification
+            TBL->>TBL: Flag fields [requires manual verification]
+        else Data sufficient
+            TBL->>TBL: Final preliminary metric labels
+        end
+
+        TBL->>WSH: Update wishlist [contacts / metrics / relevance / statuses / verification flags]
+        WSH-->>TBL: Wishlist updated
+        TBL-->>COO: Wishlist draft pack [participants / fund cards / relevance / verification flags]
+    else No active campaign
+        TBL->>TBL: Skip wishlist loop
+    end
+end
+
+loop Outreach and reply logging
+    alt Outreach sent
+        TBL->>WSH: Log outreach event
+        WSH-->>TBL: Outreach logged
+    end
+
+    alt Outreach reply received
+        TBL->>WSH: Update reply status
+        WSH-->>TBL: Status updated
+        TBL->>HBS: Reflect contact and history in CRM if needed
+        HBS-->>TBL: Contact and history updated
+    end
+
+    TBL->>TBL: Update communication history and touchpoint log
+end
+
+loop Daily and weekly structured-records review
+    TBL->>FST: Check status completeness
+    FST-->>TBL: Open and stalled funds
+    TBL->>NIN: Check intros and pending answers
+    NIN-->>TBL: Pending actions
+    TBL->>FLW: Check owners and follow-ups
+    FLW-->>TBL: Current follow-ups
+    TBL->>WSH: Check outreach and replies
+    WSH-->>TBL: Campaign statuses
+
+    TBL->>TBL: Collect open questions, missing fields, overdue updates and data conflicts
+    TBL->>TBL: Build register health snapshot [missing fields / duplicates / stale records / sync issues]
+    TBL-->>COO: Register health pack [what to fix / where data is stale / sync issues / priority updates]
+end
+                </pre>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-flag-checkered"></i> 1. Process Goal (TO-BE)</div>
+                <p class="text-block">Tables is a single agent that <strong>auto-prefills and updates every structured register</strong> — trackers, CRM, wishlists and outreach log — syncs fields between registers, surfaces duplicates, missing fields and desync in real time, and proposes corrective updates and verification flags.</p>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-layer-group"></i> 2. Process description</div>
+                <div class="timeline">
+                    <div class="step">
+                        <span class="step-owner">Tables</span>
+                        <h4>A. Monitor change sources + signal-to-record mapping</h4>
+                        <p>Monitors comms channels, calendars and status stores in parallel. For every signal, maps it to the right registry / fields / values with a confidence score.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Tables</span>
+                        <h4>B. Per signal: route to the right register</h4>
+                        <p>New fund / early stage → NIN; active stage / meeting / follow-up → FLW; overall → FST; important investor comms → LID; meeting source also updates FRK-linked fields.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Tables → COO</span>
+                        <h4>C. Suggested register updates</h4>
+                        <p>Delivers a suggested register-updates pack per signal — registry / fields / values / confidence / source — so review is a single click.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Tables → COO</span>
+                        <h4>D. Cross-register sync + alerts</h4>
+                        <p>Continuously cross-syncs FST, NIN, FLW, LID, WSH; finds duplicates, missing fields and status desync; applies fixes and emits a data sync alert with suggested corrections (or a clean signal when aligned).</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Tables → COO</span>
+                        <h4>E. Wishlist draft pack</h4>
+                        <p>When a conference / outreach campaign is active — pulls attendees (LinkedIn), fund data (PitchBook) and prior touches (HubSpot) in parallel; prefills cards, applies relevance and priority labels, flags fields needing manual verification (especially AI / robotics) and delivers a wishlist draft pack.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Tables</span>
+                        <h4>F. Outreach + reply logging</h4>
+                        <p>Logs outreach events to WSH on send; on reply — updates WSH, mirrors contact and history into HubSpot, updates communication history and touchpoint log.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Tables → COO</span>
+                        <h4>G. Daily / weekly register health pack</h4>
+                        <p>Checks completeness, intros / follow-ups / campaigns; collects missing fields, duplicates, stale records and sync issues; delivers a register health pack prioritised by urgency.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-users"></i> 3. Roles &amp; responsibility (RACI)</div>
+                <div class="grid-3">
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="role-info"><h5>CEO Office</h5><p>Approves suggested updates, reviews wishlist draft packs and acts on sync alerts and register health packs.</p></div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-table"></i></div>
+                        <div class="role-info"><h5>Tables</h5><p>Prefills, routes, cross-syncs, flags issues and drafts wishlists — keeps every register fresh without manual shuffling.</p></div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-database"></i></div>
+                        <div class="role-info"><h5>Registers (FST / NIN / FLW / LID / WSH / HBS)</h5><p>Auto-updated stores — reflect Tables' writes with full audit trail.</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-server"></i> 4. Systems (TO-BE architecture)</h4>
+                    <ul>
+                        <li><strong>Tables agent</strong> — signal mapping, cross-register sync, wishlist builder, health monitor.</li>
+                        <li><strong>Email / LinkedIn / WhatsApp / Telegram / Slack</strong> — change-source monitoring.</li>
+                        <li><strong>GCL / FRK</strong> — meeting-sourced updates.</li>
+                        <li><strong>FST / NIN / FLW / LID / WSH</strong> — auto-updated registers.</li>
+                        <li><strong>HubSpot</strong> — CRM mirror with contact / history sync.</li>
+                        <li><strong>LinkedIn + PitchBook</strong> — wishlist participant and fund data.</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-file-contract"></i> 5. Artifacts</h4>
+                    <ul>
+                        <li><strong>Suggested register updates</strong> — registry / fields / values / confidence / source.</li>
+                        <li><strong>Data sync alert</strong> — duplicates / conflicts / missing fields / suggested fixes.</li>
+                        <li><strong>Wishlist draft pack</strong> — participants + fund cards + verification flags.</li>
+                        <li><strong>Outreach + reply log</strong> + <strong>communication history</strong>.</li>
+                        <li><strong>Register health pack</strong> — prioritised list of what to fix.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-chart-pie"></i> 6. Metrics (Target)</div>
+                <table class="custom-table">
+                    <thead><tr><th>Metric</th><th>Target</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="highlight-text">Record prefill</span></td><td>Automatic — every signal maps to registry / fields / values with confidence.</td></tr>
+                        <tr><td><span class="highlight-text">Cross-register sync</span></td><td>Real-time — duplicates and desync raise an alert the moment they appear.</td></tr>
+                        <tr><td><span class="highlight-text">Duplicate detection</span></td><td>Automatic with merge / link suggestions.</td></tr>
+                        <tr><td><span class="highlight-text">Wishlist build</span></td><td>Draft pack available on demand, including participant cards and verification flags.</td></tr>
+                        <tr><td><span class="highlight-text">Register health</span></td><td>Prioritised health pack every day and week — no stale / missing-field surprises.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section-box" style="background: transparent; border: none; padding: 0; box-shadow: none;">
+                <div class="section-title"><i class="fa-solid fa-rocket"></i> 7. Initiative (automation point)</div>
+                <button class="initiative-card" onclick="openDrawer()">
+                    <div class="init-icon"><i class="fa-solid fa-table"></i></div>
+                    <div class="init-text">
+                        <h5>Tables — Register Sync &amp; Wishlist Drafts</h5>
+                        <p>Auto-prefills trackers / CRM / wishlists from every signal, syncs fields between registers, surfaces duplicates and desync in real time and delivers wishlist draft packs with verification flags.</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-right init-arrow"></i>
+                </button>
             </div>
         </section>
     </main>
@@ -1052,8 +1356,48 @@ end
         <div class="drawer-head">
             <button class="drawer-close" onclick="closeDrawer()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
             <span class="drawer-badge"><i class="fa-solid fa-bolt"></i> Module 08</span>
-            <h2 class="drawer-title">Tables initiative</h2>
-            <p class="drawer-subtitle">Drawer content will be filled in Step 16 when the TO-BE view is added.</p>
+            <h2 class="drawer-title">Tables — Register Sync &amp; Wishlist Drafts</h2>
+            <p class="drawer-subtitle">Auto-prefills trackers, CRM and wishlists; syncs fields between registers; surfaces duplicates, gaps and desync; proposes corrective updates and verification flags.</p>
+            <div class="drawer-meta">
+                <span class="drawer-chip effect"><i class="fa-solid fa-bullseye"></i> Table prep speed &amp; quality</span>
+                <span class="drawer-chip date"><i class="fa-solid fa-calendar-day"></i> May 22, 2026</span>
+                <span class="drawer-chip"><i class="fa-solid fa-hashtag"></i> № 08</span>
+            </div>
+        </div>
+        <div class="drawer-body">
+            <h4 class="drawer-section-title">What this module does</h4>
+            <p style="font-size:14px; color:var(--text-main); line-height:1.65; margin:0 0 24px; font-weight:300;">
+                Tables automates filling and updating trackers, CRM, wishlists and other structured registries. It syncs fields between sources, finds duplicates, gaps and desync, and suggests what to update. It speeds up building fund and participant cards, logging outreach and keeping tables current — without manual data shuffling.
+            </p>
+
+            <h4 class="drawer-section-title">User stories</h4>
+            <ol class="story-list">
+                <li><span>The agent pre-fills tracker updates based on a signal, meeting or fund stage — no manual re-typing across files.</span></li>
+                <li><span>The agent syncs fields between registers, finds duplicates, highlights gaps and desync — to keep statuses current.</span></li>
+                <li><span>The agent pre-fills the wishlist with conference participants and fund cards from available sources.</span></li>
+                <li><span>The agent pre-labels participant relevance and flags fields needing manual verification, especially AI / robotics investments.</span></li>
+                <li><span>The agent logs outreach events and reply statuses into wishlist / CRM — to know who was contacted and who replied.</span></li>
+            </ol>
+
+            <h4 class="drawer-section-title">Delivery requirements</h4>
+            <ul class="req-list">
+                <li><i class="fa-solid fa-check"></i> Signal-to-record mapping: entity, registry, fields, values, confidence score.</li>
+                <li><i class="fa-solid fa-check"></i> Cross-registry sync: FST / NIN / FLW / LID / WSH with duplicate and conflict detection.</li>
+                <li><i class="fa-solid fa-check"></i> Wishlist pipeline with participant cards, fund cards and verification flags.</li>
+                <li><i class="fa-solid fa-check"></i> Outreach logging across WSH and HubSpot with reply-status tracking.</li>
+                <li><i class="fa-solid fa-check"></i> Register health snapshot: missing fields, duplicates, stale records, sync issues.</li>
+            </ul>
+
+            <div style="margin-top: 28px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="https://docs.google.com/spreadsheets/d/1QiCLAk5O0tma55ZGNQyAXRNfP-oxS0OC9Y8H_b4SMvo/edit?usp=sharing" target="_blank" rel="noopener"
+                   style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--hmnd-blue); color:#fff; font-weight:500; font-size:13px; text-decoration:none;">
+                    <i class="fa-solid fa-file-lines"></i> Open full strategy
+                </a>
+                <button onclick="closeDrawer()"
+                        style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--surface); color:var(--hmnd-navy); font-family:inherit; font-weight:500; font-size:13px; border:1px solid var(--border); cursor:pointer;">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </button>
+            </div>
         </div>
     </aside>
 
