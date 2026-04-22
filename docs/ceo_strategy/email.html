@@ -996,11 +996,296 @@ end
             </div>
         </section>
 
-                <!-- TO-BE view (filled in Step 12) -->
+                <!-- TO-BE view -->
         <section id="view-tobe" class="view-section">
-            <div class="diagram-container" style="padding:60px; color:var(--text-dim); font-weight:300;">
-                <i class="fa-solid fa-clock" style="color:var(--hmnd-blue); font-size:22px; display:block; margin-bottom:12px;"></i>
-                TO-BE content for Email will be added in the next batch (Step 12).
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+autonumber
+
+box rgb(248, 250, 252) External
+participant EXT as Funds / partners / contacts
+end
+
+box rgb(248, 250, 252) Systems
+participant EML as Email
+participant LKD as LinkedIn
+participant WAP as WhatsApp
+participant TGM as Telegram
+participant SLK as Slack
+participant HBS as HubSpot
+participant FST as Fundraising Status
+participant NIN as NEW Intros + Banks
+participant FLW as Followers
+participant LID as Investor file
+participant WSH as Wishlists &amp; outreach
+participant GCL as Google Calendar
+end
+
+box rgb(238, 242, 255) AI Layer
+participant EMA as Email
+end
+
+box rgb(254, 242, 242) Internal
+participant COO as CEO Office
+end
+
+Note over EMA: Email aggregates inbound from mail, LinkedIn, WhatsApp, Telegram, Slack and status files into a single inbox stream
+Note over EMA: Normalises signal, writes RU summary, suggests owner, template and follow-up, and drafts important replies for human review
+
+loop Daily — communications monitoring
+    par Channel monitoring
+        EMA->>EML: Check inbox
+        EML-->>EMA: New emails and replies
+        EMA->>LKD: Check LinkedIn
+        LKD-->>EMA: New messages
+        EMA->>WAP: Check WhatsApp
+        WAP-->>EMA: New messages
+        EMA->>TGM: Check Telegram messages and voice
+        TGM-->>EMA: New messages
+        EMA->>SLK: Check work conversations and statuses
+        SLK-->>EMA: New messages and updates
+    and Status-source context
+        EMA->>FST: Check overall fund status
+        FST-->>EMA: Stage, next step, last touch
+        EMA->>NIN: Check early stage
+        NIN-->>EMA: Interest, date, pending follow-up
+        EMA->>FLW: Check active stage
+        FLW-->>EMA: Replies, stage, follow-up
+        EMA->>LID: Check investor history
+        LID-->>EMA: Prior communication
+        EMA->>WSH: Check outreach and wishlist
+        WSH-->>EMA: Outreach history and replies
+        EMA->>GCL: Check meetings and nearest touches
+        GCL-->>EMA: Meetings and related touches
+    end
+
+    EMA->>EMA: Aggregate new signals into a single inbox stream
+    EMA->>EMA: Deduplicate and link messages into thread context
+end
+
+loop Per new message or thread
+    EMA->>EMA: Determine entity [fund / contact / company / thread]
+    EMA->>EMA: Normalise signal [source / fund / contact / role / company / AUM / date / link / event type]
+
+    alt Source = Email
+        EMA->>HBS: Search email thread history and templates
+        HBS-->>EMA: Prior thread, templates and comms history
+    else Source = LinkedIn
+        EMA->>HBS: Search related contact and history
+        HBS-->>EMA: Communication history
+    else Source = Telegram / WhatsApp / Slack
+        EMA->>EMA: Parse message and link with available context
+    end
+
+    EMA->>FST: Check current fund stage
+    FST-->>EMA: Stage, next step, date
+    EMA->>NIN: Check early stage if needed
+    NIN-->>EMA: Interest and follow-up
+    EMA->>FLW: Check active stage if needed
+    FLW-->>EMA: Status and replies
+    EMA->>LID: Check prior investor context
+    LID-->>EMA: Investor history
+
+    EMA->>EMA: Classify signal, importance, urgency and communication risk
+    EMA->>EMA: Suggested owner [CEO Office / Alina / Dima / Yohann]
+    EMA->>EMA: Build Russian Telegram-summary [sender / role / company / AUM / gist / full translation / history / suggested owner]
+
+    EMA-->>COO: Incoming summary [normalised signal / context / suggested owner / urgency]
+end
+
+loop Per message that needs a reply
+    EMA->>HBS: Find recommended template, prior thread and suggested follow-up
+    HBS-->>EMA: Template, prior thread, history
+
+    EMA->>EMA: Build recommended reply strategy [reply / follow-up / reminder / intro response / scheduling]
+    EMA->>EMA: Personalise draft for fund stage and history
+
+    alt Routine follow-up / slots / reminder
+        alt Channel = Email
+            EMA->>EMA: Build auto draft
+            EMA->>EML: Send follow-up / slots / reminder
+            EML-->>EXT: Reply sent
+        else Channel = LinkedIn
+            EMA->>EMA: Build auto draft
+            EMA->>LKD: Send message
+            LKD-->>EXT: Reply sent
+        else Channel = Telegram / WhatsApp
+            EMA->>EMA: Build suggested reply
+            EMA-->>COO: Suggested reply [manual send]
+        end
+    else Important personalised reply to investor
+        EMA->>EMA: Build personalised draft
+        EMA-->>COO: Draft for human review [reply / rationale / prior thread / suggested next step]
+        COO->>COO: Mandatory human review in CEO Office
+        alt Draft approved
+            COO->>EML: Send final email
+            EML-->>EXT: Reply sent
+        else Needs edits
+            COO->>EMA: Revise draft and tone
+            EMA-->>COO: Updated personalised draft
+        end
+    end
+end
+
+loop After sending a communication
+    EMA->>FST: Update overall status [replied / reminded / waiting feedback]
+    alt Fund in early stage
+        EMA->>NIN: Update [date / reminder / owner]
+        NIN-->>EMA: Early stage updated
+    else Fund in active stage
+        EMA->>FLW: Update [follow-up / owner / status]
+        FLW-->>EMA: Active stage updated
+    end
+    EMA->>LID: Update investor history if needed
+    LID-->>EMA: History updated
+    EMA->>EMA: Update reply history, last touch and expected feedback date
+end
+
+loop Daily communications digest
+    EMA->>EMA: Collect summary of new inbound
+    EMA->>EMA: Translate and paraphrase in Russian
+    EMA->>EMA: Check suggested owners, pending replies and awaited feedback
+    EMA->>EMA: Check missing replies, stalled threads and overdue follow-up
+    EMA->>EMA: Highlight emails that need human review
+
+    EMA-->>COO: Daily communication digest [who to reply / who to remind / who is waiting feedback / which need human review / where is communication risk]
+end
+
+loop Reply quality and speed control
+    EMA->>EML: Check new replies and unanswered threads
+    EML-->>EMA: Reply-rate status and open threads
+    EMA->>LKD: Check unanswered LinkedIn threads
+    LKD-->>EMA: Open LinkedIn conversations
+    EMA->>EMA: Analyse response speed, coverage and share of pending communications
+    EMA->>EMA: Detect risk signals [no reply / lost thread / overdue follow-up / no owner / missing context]
+
+    alt Important communication at risk
+        EMA-->>COO: Alert [important communication at risk / response overdue / human review needed]
+    else No risk
+        EMA-->>COO: Communication status clean [no critical gaps]
+    end
+end
+                </pre>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-flag-checkered"></i> 1. Process Goal (TO-BE)</div>
+                <p class="text-block">Email is a single communication copilot: aggregates inbound from all channels and status files into <strong>one inbox stream</strong>, normalises every event, produces a Russian Telegram-summary, drafts routine replies automatically and <strong>escalates important investor communications for human review</strong> — with continuous reply-quality and speed control.</p>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-layer-group"></i> 2. Process description</div>
+                <div class="timeline">
+                    <div class="step">
+                        <span class="step-owner">Email</span>
+                        <h4>A. Unified inbox stream across five channels + status files</h4>
+                        <p>Monitors Email, LinkedIn, WhatsApp, Telegram, Slack and FST / NIN / FLW / LID / WSH / GCL; deduplicates and links messages into a single thread-aware inbox stream.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Email</span>
+                        <h4>B. Entity + signal normalisation</h4>
+                        <p>Determines entity (fund / contact / company / thread) and normalises the signal — source, fund, contact, role, company, AUM, date, link, event type.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Email</span>
+                        <h4>C. Classify, score importance, suggest owner</h4>
+                        <p>Classifies the signal, scores importance / urgency / communication risk and suggests an owner (CEO Office / Alina / Dima / Yohann).</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Email → COO</span>
+                        <h4>D. Russian Telegram-summary + incoming pack</h4>
+                        <p>Writes a Russian Telegram-summary (sender, role, company, AUM, gist, translation, history, suggested owner) and delivers an incoming summary pack to the CEO Office with normalised signal, context, urgency.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Email</span>
+                        <h4>E. Recommended reply + personalised draft</h4>
+                        <p>Pulls template, prior thread and suggested follow-up from HubSpot and builds a recommended reply strategy (reply / follow-up / reminder / intro response / scheduling), personalised to fund stage and history.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Email + COO</span>
+                        <h4>F. Auto for routine, human review for important</h4>
+                        <p>Routine follow-ups / slots / reminders are sent automatically via Email / LinkedIn (suggested reply for Telegram / WhatsApp). Important investor replies go to CEO Office as drafts with rationale, prior thread and suggested next step for human approval or editing.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Email</span>
+                        <h4>G. Post-send tracker updates + reply history</h4>
+                        <p>After sending — updates overall status, early / active stage and investor history, plus reply history, last touch and expected feedback date.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Email → COO</span>
+                        <h4>H. Daily digest + reply-quality control</h4>
+                        <p>Delivers a daily communication digest (who to reply / remind / awaiting feedback / needs human review) and runs continuous reply-quality and speed control with risk alerts on stalled or important threads.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-users"></i> 3. Roles &amp; responsibility (RACI)</div>
+                <div class="grid-3">
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="role-info"><h5>CEO Office</h5><p>Consumes incoming summaries and digests. Approves / edits important personalised drafts. Escalates as needed.</p></div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-envelope"></i></div>
+                        <div class="role-info"><h5>Email</h5><p>Aggregates, normalises, summarises, drafts routine replies, escalates important ones and tracks reply-quality continuously.</p></div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-database"></i></div>
+                        <div class="role-info"><h5>HubSpot + trackers</h5><p>Templates, thread history and fund stage sources — auto-updated after every send.</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-server"></i> 4. Systems (TO-BE architecture)</h4>
+                    <ul>
+                        <li><strong>Email agent</strong> — multi-channel ingestion, normalisation, drafting, quality control.</li>
+                        <li><strong>Email / LinkedIn / WhatsApp / Telegram / Slack</strong> — inbound channels.</li>
+                        <li><strong>HubSpot</strong> — thread history and templates.</li>
+                        <li><strong>FST / NIN / FLW / LID / WSH</strong> — stage and outreach trackers, auto-updated post-send.</li>
+                        <li><strong>Google Calendar</strong> — meeting context for scheduling replies.</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-file-contract"></i> 5. Artifacts</h4>
+                    <ul>
+                        <li><strong>Unified inbox stream</strong> — deduplicated, thread-aware.</li>
+                        <li><strong>Normalised signal</strong> — source, fund, contact, role, company, AUM, date, link, event type, urgency.</li>
+                        <li><strong>Russian Telegram-summary</strong> — per new message, with suggested owner.</li>
+                        <li><strong>Auto-drafts</strong> — routine follow-ups / slots / reminders.</li>
+                        <li><strong>Persona draft for review</strong> — reply + rationale + prior thread + suggested next step.</li>
+                        <li><strong>Daily communication digest</strong> + <strong>reply-quality alerts</strong>.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-chart-pie"></i> 6. Metrics (Target)</div>
+                <table class="custom-table">
+                    <thead><tr><th>Metric</th><th>Target</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="highlight-text">Channel coverage</span></td><td><strong>100%</strong> — every channel ingested, deduplicated and stitched into a single thread context.</td></tr>
+                        <tr><td><span class="highlight-text">Normalisation</span></td><td>Automatic — every signal has source, fund, contact, role, company, AUM, date, link, event type and urgency.</td></tr>
+                        <tr><td><span class="highlight-text">RU summary</span></td><td>Generated on every new message with suggested owner.</td></tr>
+                        <tr><td><span class="highlight-text">Reply drafting</span></td><td>Auto for routine, persona-draft with human review for important — no manual template hunting.</td></tr>
+                        <tr><td><span class="highlight-text">Reply-quality control</span></td><td>Continuous — stalled threads, overdue follow-ups and communication risk surface in real time.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section-box" style="background: transparent; border: none; padding: 0; box-shadow: none;">
+                <div class="section-title"><i class="fa-solid fa-rocket"></i> 7. Initiative (automation point)</div>
+                <button class="initiative-card" onclick="openDrawer()">
+                    <div class="init-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <div class="init-text">
+                        <h5>Email — Communication Copilot</h5>
+                        <p>Unifies inbound across five channels, normalises and summarises every signal, drafts routine replies automatically and escalates important investor replies for human review — with continuous reply-quality and speed control.</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-right init-arrow"></i>
+                </button>
             </div>
         </section>
     </main>
@@ -1011,8 +1296,48 @@ end
         <div class="drawer-head">
             <button class="drawer-close" onclick="closeDrawer()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
             <span class="drawer-badge"><i class="fa-solid fa-bolt"></i> Module 06</span>
-            <h2 class="drawer-title">Email initiative</h2>
-            <p class="drawer-subtitle">Drawer content will be filled in Step 12 when the TO-BE view is added.</p>
+            <h2 class="drawer-title">Email — Communication Copilot</h2>
+            <p class="drawer-subtitle">Unifies inbound across five channels, normalises every signal, drafts routine replies automatically and escalates important investor replies for human review.</p>
+            <div class="drawer-meta">
+                <span class="drawer-chip effect"><i class="fa-solid fa-bullseye"></i> Reply coverage, quality &amp; speed</span>
+                <span class="drawer-chip date"><i class="fa-solid fa-calendar-day"></i> May 15, 2026</span>
+                <span class="drawer-chip"><i class="fa-solid fa-hashtag"></i> № 06</span>
+            </div>
+        </div>
+        <div class="drawer-body">
+            <h4 class="drawer-section-title">What this module does</h4>
+            <p style="font-size:14px; color:var(--text-main); line-height:1.65; margin:0 0 24px; font-weight:300;">
+                Email aggregates incoming signals from mail, LinkedIn, WhatsApp, Telegram, Slack and other channels into a single stream. It normalises and classifies every event — who wrote, from where, about which fund, what happened, what to do next — and accelerates replies via follow-ups, prior threads, templates and personalised drafts under human review for important communications.
+            </p>
+
+            <h4 class="drawer-section-title">User stories</h4>
+            <ol class="story-list">
+                <li><span>The agent aggregates new signals from email, LinkedIn, WhatsApp, Telegram, Slack and status files into a single inbox stream — nothing is lost.</span></li>
+                <li><span>The agent normalises and classifies the signal: source, fund, contact, date, link, event type — to parse incoming faster.</span></li>
+                <li><span>Get a Russian Telegram-summary of incoming: author, role, company, AUM, short gist, full translation, comms history and suggested owner.</span></li>
+                <li><span>Get a recommended template, prior thread and suggested follow-up — to speed up email and LinkedIn work.</span></li>
+                <li><span>Important investor replies land as personalised drafts with mandatory human review; routine follow-ups, slots and reminders go automatically.</span></li>
+            </ol>
+
+            <h4 class="drawer-section-title">Delivery requirements</h4>
+            <ul class="req-list">
+                <li><i class="fa-solid fa-check"></i> Multi-channel ingestion and deduplication into a single thread context.</li>
+                <li><i class="fa-solid fa-check"></i> Signal normalisation schema: source, fund, contact, role, company, AUM, date, link, event type, urgency.</li>
+                <li><i class="fa-solid fa-check"></i> Russian-language Telegram digest with suggested owner.</li>
+                <li><i class="fa-solid fa-check"></i> Reply strategy engine: reply / follow-up / reminder / intro / scheduling — auto for routine, draft for important.</li>
+                <li><i class="fa-solid fa-check"></i> Post-send updates to FST / NIN / FLW / LID and reply-history tracking.</li>
+            </ul>
+
+            <div style="margin-top: 28px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="https://docs.google.com/spreadsheets/d/1QiCLAk5O0tma55ZGNQyAXRNfP-oxS0OC9Y8H_b4SMvo/edit?usp=sharing" target="_blank" rel="noopener"
+                   style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--hmnd-blue); color:#fff; font-weight:500; font-size:13px; text-decoration:none;">
+                    <i class="fa-solid fa-file-lines"></i> Open full strategy
+                </a>
+                <button onclick="closeDrawer()"
+                        style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--surface); color:var(--hmnd-navy); font-family:inherit; font-weight:500; font-size:13px; border:1px solid var(--border); cursor:pointer;">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </button>
+            </div>
         </div>
     </aside>
 
