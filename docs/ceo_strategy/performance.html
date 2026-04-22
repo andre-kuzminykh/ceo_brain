@@ -1073,11 +1073,341 @@ end
             </div>
         </section>
 
-                <!-- TO-BE view (filled in Step 4) -->
+                <!-- TO-BE view -->
         <section id="view-tobe" class="view-section">
-            <div class="diagram-container" style="padding:60px; color:var(--text-dim); font-weight:300;">
-                <i class="fa-solid fa-clock" style="color:var(--hmnd-blue); font-size:22px; display:block; margin-bottom:12px;"></i>
-                TO-BE content for Performance will be added in the next batch (Step 4).
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+autonumber
+
+box rgb(248, 250, 252) Systems
+participant CON as Confluence
+participant GOL as Goals &amp; Roadmap
+participant BKL as Sprint Backlog
+participant CHK as Daily Checklist
+participant RPT as Weekly / Monthly Review
+participant EML as Email
+participant LKD as LinkedIn
+participant WAP as WhatsApp
+participant TGM as Telegram
+participant SLK as Slack
+participant FST as Fundraising Status
+participant NIN as NEW Intros + Banks
+participant FLW as Followers
+participant LID as Investor file
+participant GCL as Google Calendar
+participant FRK as Fundraising calendar
+participant FFL as Fireflies
+end
+
+box rgb(238, 242, 255) AI Layer
+participant PRF as Performance
+end
+
+box rgb(254, 242, 242) Internal
+participant COO as CEO Office
+end
+
+Note over PRF: Performance ties goals, roadmap and performance to real pipeline movement, tasks, follow-ups, SLA and blockers
+Note over PRF: Auto-flags goal risk, stalled funds, missing follow-up, overdue, no owner, data conflict — and proposes reprioritization
+
+loop Annual cycle by direction
+    COO->>PRF: Trigger annual planning [directions / goals / constraints]
+    PRF->>CON: Collect past materials, playbooks and outcomes
+    CON-->>PRF: Historical materials
+    PRF->>FST: Collect fund movement history
+    FST-->>PRF: Stage / decline / blocker history
+    PRF->>FRK: Collect external meeting history and summaries
+    FRK-->>PRF: Fundraising meeting history
+    PRF->>PRF: Shape directions and link strategic goals to operational drivers
+    PRF->>PRF: Define KPIs, owners, control metrics and leading indicators
+    PRF->>GOL: Update annual goals, KPIs, owners and metrics
+    GOL-->>PRF: Goals and KPIs saved
+    PRF-->>COO: Annual performance map [goals / KPI / owners / drivers / risks]
+end
+
+loop Quarterly cycle
+    COO->>PRF: Trigger quarterly planning
+    PRF->>GOL: Read annual goals and KPIs
+    GOL-->>PRF: Annual goals and target metrics
+    PRF->>PRF: Decompose into quarterly outcomes
+    PRF->>PRF: Define initiatives, owners, dependencies and key risks
+    PRF->>PRF: Identify pipeline metrics and processes that drive outcomes
+    PRF->>GOL: Update quarterly focus, outcomes and control criteria
+    GOL-->>PRF: Quarterly focus saved
+    PRF-->>COO: Quarterly execution map [outcomes / owners / dependencies / risk signals]
+end
+
+loop Monthly review
+    COO->>PRF: Trigger monthly review
+    PRF->>FST: Sync fund stages, decline reasons and pending follow-ups
+    PRF->>FRK: Sync meetings held, summaries and next steps
+    PRF->>GCL: Sync meetings and external activity
+    PRF->>PRF: Analyse fund movement vs goals
+    PRF->>PRF: Shape monthly focus per direction
+    PRF->>GOL: Update monthly priorities, deliverables, owners and risks
+    GOL-->>PRF: Monthly priorities updated
+    PRF-->>COO: Monthly focus [priorities / blockers / goal risk / owner load]
+end
+
+loop Weekly sprint
+    COO->>PRF: Trigger weekly planning
+    PRF->>FST: Gather active statuses, last touch, gaps and blockers
+    PRF->>NIN: Gather early stages, intros and pending answers
+    PRF->>FLW: Gather active funds, stages, replies and owners
+    PRF->>LID: Gather investor statuses and communications
+    PRF->>GCL: Gather meetings for the week
+    PRF->>FRK: Gather fundraising meetings, summaries and pending follow-ups
+    PRF->>PRF: Compute weekly priorities, owner capacity, dependencies and blockers
+    PRF->>BKL: Auto-build sprint backlog [tasks / owners / due / dependencies / priority]
+    BKL-->>PRF: Backlog updated
+    PRF-->>COO: Weekly plan [top priorities / owners / risks / overdue / follow-up queue]
+end
+
+loop Daily cycle — morning, day, evening
+    par Comms monitoring
+        PRF->>EML: Check inbox and threads
+        EML-->>PRF: New emails
+        PRF->>LKD: Check LinkedIn
+        LKD-->>PRF: New messages
+        PRF->>WAP: Check WhatsApp
+        WAP-->>PRF: New messages
+        PRF->>TGM: Check Telegram
+        TGM-->>PRF: New messages
+        PRF->>SLK: Check Slack
+        SLK-->>PRF: New updates
+    and Tracker monitoring
+        PRF->>FST: Check fundraising status
+        FST-->>PRF: Stage, next step, date, reminder, blockers
+        PRF->>NIN: Check new intros
+        NIN-->>PRF: Interest, date, pending follow-up
+        PRF->>FLW: Check followers
+        FLW-->>PRF: Stage, replies, meetings, owner
+        PRF->>LID: Check investor file
+        LID-->>PRF: Communications and statuses
+    and Calendar monitoring
+        PRF->>GCL: Check meetings for the day
+        GCL-->>PRF: Meeting list
+        PRF->>FRK: Check fundraising calendar
+        FRK-->>PRF: Meetings, summaries and next steps
+    end
+
+    PRF->>PRF: Compile unified operating state
+    PRF->>PRF: Check gaps without reply, SLA breaches, overdue and stalled comms
+    PRF->>PRF: Check data conflicts, missing fields and status desync
+    PRF->>PRF: Score impact on goals, pipeline velocity and owner load
+
+    PRF->>CHK: Update daily checklist [priorities / overdue / no owner / missing follow-up / critical risks]
+    CHK-->>PRF: Daily checklist saved
+
+    alt Goal or process risk found
+        PRF->>RPT: Emit risk signal [goal at risk / stalled fund / no reply &gt; 10 days / follow-up missing / overdue / data conflict]
+        RPT-->>PRF: Risk alert, cause, owner and suggested action
+        PRF-->>COO: Alert + suggested reprioritization
+        PRF->>BKL: Auto-update task priority and follow-up queue
+        BKL-->>PRF: Backlog reprioritized
+    else No risk
+        PRF-->>COO: Daily status clean [no critical deviations]
+    end
+end
+
+loop Per fundraising meeting held
+    PRF->>FFL: Fetch meeting transcript
+    alt Transcript available
+        FFL-->>PRF: Transcript
+        PRF->>PRF: Generate summary, follow-up, next actions and risk signals
+    else Transcript missing
+        PRF->>PRF: Build summary from notes and calendar context
+    end
+    PRF->>FRK: Update fundraising calendar [summary / owner / next step]
+    PRF->>FST: Update fund status [stage / last touch / risk / blocker]
+    PRF->>BKL: Add follow-up tasks into backlog
+    PRF-->>COO: Post-meeting action pack [summary / next step / deadline / owner / risk]
+end
+
+loop Weekly review and retro
+    COO->>PRF: Trigger weekly review
+    PRF->>GCL: Sync external meetings for the week
+    PRF->>FRK: Sync summaries, owners and next steps
+    PRF->>FST: Sync fund stages, last touch, gaps and blockers
+    PRF->>NIN: Sync early stages and pending intros
+    PRF->>FLW: Sync follow-ups, owners and active stages
+    PRF->>LID: Sync investor history
+    PRF->>BKL: Sync tasks, owners, overdue and blocked items
+
+    PRF->>PRF: Analyse weekly fund movement and performance against goals
+    PRF->>PRF: Check risk zones [gap &gt; 10 days / missing follow-up / no owner / stalled fund / data conflict]
+    PRF->>RPT: Save weekly performance review
+    RPT-->>PRF: Weekly summary, risk signals and suggested reprioritization
+    PRF->>BKL: Update sprint backlog for next week
+    PRF-->>COO: Weekly review pack [progress / risks / reprioritization / owner actions]
+end
+
+loop Monthly review
+    COO->>PRF: Trigger monthly review
+    PRF->>FST: Collect fund statuses for the period
+    PRF->>FRK: Collect meeting history and summaries for the month
+    PRF->>NIN: Collect early-stage dynamics and pending answers
+    PRF->>FLW: Collect dynamics for active funds
+    PRF->>LID: Collect key investor communications
+    PRF->>BKL: Collect backlog execution and overdue
+    PRF->>GOL: Read current goals and monthly priorities
+
+    PRF->>PRF: Analyse monthly movement, performance and operational-to-goal link
+    PRF->>PRF: Analyse stalls, SLA breaches, missed follow-ups and data conflicts
+    PRF->>RPT: Save monthly review [pipeline movement / decline reasons / blockers / owner performance / data quality / goal risk]
+    RPT-->>PRF: Monthly review, risk map and recommendations
+    PRF->>GOL: Adjust monthly priorities, roadmap and focus areas
+    GOL-->>PRF: Roadmap updated
+    PRF-->>COO: Monthly management pack [movement / risks / owner load / recommendations / focus changes]
+end
+                </pre>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-flag-checkered"></i> 1. Process Goal (TO-BE)</div>
+                <p class="text-block">Performance is a single agent that runs the full cadence — annual → daily — and keeps a <strong>live link from goals to pipeline movement, blockers and owner load</strong>. It auto-detects risks (stalled funds, missing follow-ups, overdue tasks, data conflicts), proposes reprioritization in real time and produces every plan and review automatically.</p>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-layer-group"></i> 2. Process description</div>
+                <div class="timeline">
+                    <div class="step">
+                        <span class="step-owner">CEO Office → Performance</span>
+                        <h4>A. Annual / quarterly planning</h4>
+                        <p>CEO Office triggers planning. Performance pulls history (Confluence / FST / FRK), defines KPIs, owners, leading indicators, decomposes annual into quarterly outcomes and returns the annual performance map and quarterly execution map.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Performance</span>
+                        <h4>B. Monthly review</h4>
+                        <p>Syncs fund stages, decline reasons, meetings and follow-ups; analyses fund movement vs goals; updates monthly priorities, deliverables, owners and risks. Returns a monthly focus pack.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Performance</span>
+                        <h4>C. Weekly sprint</h4>
+                        <p>Gathers active fund statuses, intros, followers, investor touches and the week's meetings. Computes weekly priorities, owner capacity, dependencies and blockers, then auto-builds the sprint backlog and returns the weekly plan.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Performance</span>
+                        <h4>D. Daily cycle — morning / day / evening</h4>
+                        <p>Monitors comms, trackers and calendars in parallel. Compiles unified operating state, scores impact on goals / pipeline velocity / owner load, updates the daily checklist and emits risk signals — with an auto-reprioritized backlog and a suggested-reprioritization message to the CEO Office.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Performance</span>
+                        <h4>E. Per fundraising meeting</h4>
+                        <p>Pulls Fireflies transcript (or builds the summary from notes + calendar context), generates follow-up, next actions and risk signals, updates fundraising calendar, fund status and backlog, and delivers a post-meeting action pack.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Performance</span>
+                        <h4>F. Weekly review and retro</h4>
+                        <p>Cross-syncs everything, analyses movement against goals, checks risk zones, saves the weekly performance review, refreshes the sprint backlog and returns a weekly review pack to CEO Office.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Performance</span>
+                        <h4>G. Monthly review</h4>
+                        <p>Collects period-level data, analyses operational-to-goal link, saves the monthly review, adjusts roadmap and focus areas, and returns a monthly management pack.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-users"></i> 3. Roles &amp; responsibility (RACI)</div>
+                <div class="grid-3">
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="role-info">
+                            <h5>CEO Office</h5>
+                            <p>Triggers planning cycles and consumes plans, alerts and review packs. Approves reprioritization.</p>
+                        </div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-gauge-high"></i></div>
+                        <div class="role-info">
+                            <h5>Performance</h5>
+                            <p>Runs the full cadence, monitors signals, builds plans, surfaces risks and proposes reprioritization in real time.</p>
+                        </div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-database"></i></div>
+                        <div class="role-info">
+                            <h5>Goals &amp; Roadmap / Backlog</h5>
+                            <p>Auto-updated stores. Reflect Performance's plans, priorities and reprioritization decisions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-server"></i> 4. Systems (TO-BE architecture)</h4>
+                    <ul>
+                        <li><strong>Performance agent</strong> — central planner, monitor and risk engine.</li>
+                        <li><strong>Goals &amp; Roadmap, Sprint Backlog</strong> — auto-updated planning artifacts.</li>
+                        <li><strong>Daily Checklist, Weekly / Monthly Review</strong> — auto-compiled outputs.</li>
+                        <li><strong>FST / NIN / FLW / LID</strong> — fund stage and investor signals.</li>
+                        <li><strong>GCL / FRK</strong> — meetings and fundraising calendar.</li>
+                        <li><strong>Fireflies</strong> — transcripts; Performance generates summaries directly.</li>
+                        <li><strong>Email / LinkedIn / WhatsApp / Telegram / Slack</strong> — comms inputs.</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-file-contract"></i> 5. Artifacts</h4>
+                    <ul>
+                        <li><strong>Annual performance map</strong> — goals / KPI / owners / drivers / risks.</li>
+                        <li><strong>Quarterly execution map</strong> — outcomes / owners / dependencies / risks.</li>
+                        <li><strong>Monthly focus</strong> — priorities / blockers / goal risk / owner load.</li>
+                        <li><strong>Weekly plan</strong> — top priorities / owners / risks / overdue / follow-up queue.</li>
+                        <li><strong>Daily control pack</strong> — clean status or alert + suggested reprioritization.</li>
+                        <li><strong>Post-meeting action pack</strong> — summary / next step / deadline / owner / risk.</li>
+                        <li><strong>Weekly / monthly review packs</strong> — progress / risks / reprioritization / focus.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-chart-pie"></i> 6. Metrics (Target)</div>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Target</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="highlight-text">Risk detection lag</span></td>
+                            <td><strong>Real-time</strong> — risks surface the moment a deviation appears, not at the next retro.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight-text">Goal ↔ pipeline traceability</span></td>
+                            <td><strong>Live</strong> — every goal traceable to fund stages, next actions, blockers and owner load.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight-text">Reprioritization</span></td>
+                            <td>Suggested automatically on every alert; backlog auto-reprioritized in the daily loop.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight-text">Data quality</span></td>
+                            <td>Continuous monitoring — desync, conflicts and missing fields raise an alert immediately.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight-text">Cadence overhead</span></td>
+                            <td>Hours of manual work → minutes of human review on Performance-generated packs.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section-box" style="background: transparent; border: none; padding: 0; box-shadow: none;">
+                <div class="section-title"><i class="fa-solid fa-rocket"></i> 7. Initiative (automation point)</div>
+                <button class="initiative-card" onclick="openDrawer()">
+                    <div class="init-icon"><i class="fa-solid fa-gauge-high"></i></div>
+                    <div class="init-text">
+                        <h5>Performance — Goals to Pipeline Control</h5>
+                        <p>A single agent that runs the full annual / quarterly / monthly / weekly / daily cadence, keeps a live link from goals to pipeline movement, surfaces risks in real time and auto-reprioritizes the backlog.</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-right init-arrow"></i>
+                </button>
             </div>
         </section>
     </main>
@@ -1088,8 +1418,48 @@ end
         <div class="drawer-head">
             <button class="drawer-close" onclick="closeDrawer()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
             <span class="drawer-badge"><i class="fa-solid fa-bolt"></i> Module 02</span>
-            <h2 class="drawer-title">Performance initiative</h2>
-            <p class="drawer-subtitle">Drawer content will be filled in Step 4 when the TO-BE view is added.</p>
+            <h2 class="drawer-title">Performance — Goals to Pipeline Control</h2>
+            <p class="drawer-subtitle">Turns goals into a managed control system — linking strategy to fund stages, blockers and owner load, and surfacing risks in real time with auto-reprioritization.</p>
+            <div class="drawer-meta">
+                <span class="drawer-chip effect"><i class="fa-solid fa-bullseye"></i> Effectiveness</span>
+                <span class="drawer-chip date"><i class="fa-solid fa-calendar-day"></i> May 1, 2026</span>
+                <span class="drawer-chip"><i class="fa-solid fa-hashtag"></i> № 02</span>
+            </div>
+        </div>
+        <div class="drawer-body">
+            <h4 class="drawer-section-title">What this module does</h4>
+            <p style="font-size:14px; color:var(--text-main); line-height:1.65; margin:0 0 24px; font-weight:300;">
+                Performance turns goals into a managed progress-control system. It ties goals to fund stages, next actions, blockers and stalled communications; manages team priorities and load; highlights risk zones, plan deviations and at-risk-goal signals so owners can reprioritise fast.
+            </p>
+
+            <h4 class="drawer-section-title">User stories</h4>
+            <ol class="story-list">
+                <li><span>See the link between fundraising goals, current fund stages, next actions and open blockers — to understand how operational work affects goals.</span></li>
+                <li><span>The agent flags funds without a reply for more than 10 days, gap / SLA breaches and stalled comms — so follow-ups happen in time.</span></li>
+                <li><span>See fund movement weekly and monthly to understand real round progress and where performance sags.</span></li>
+                <li><span>The agent surfaces data conflicts, missing fields, status desync and process risk zones — to keep pipeline quality.</span></li>
+                <li><span>Get signals like "goal at risk because task wasn't closed / follow-up missing / fund stalled" — to manage priorities and owners.</span></li>
+            </ol>
+
+            <h4 class="drawer-section-title">Delivery requirements</h4>
+            <ul class="req-list">
+                <li><i class="fa-solid fa-check"></i> Annual / quarterly / monthly / weekly / daily operating cadence with auto-generated focus packs.</li>
+                <li><i class="fa-solid fa-check"></i> Risk engine: gap &gt; 10 days, SLA breach, stalled fund, missing follow-up, overdue task, data conflict, no owner.</li>
+                <li><i class="fa-solid fa-check"></i> Owner load map across CEO Office, Alina, Dima, Yohann.</li>
+                <li><i class="fa-solid fa-check"></i> Integration with Goals &amp; Roadmap, Sprint Backlog and Weekly / Monthly Review artifacts.</li>
+                <li><i class="fa-solid fa-check"></i> Suggested reprioritization output whenever a deviation is detected, with auto-update of the backlog.</li>
+            </ul>
+
+            <div style="margin-top: 28px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="https://docs.google.com/spreadsheets/d/1QiCLAk5O0tma55ZGNQyAXRNfP-oxS0OC9Y8H_b4SMvo/edit?usp=sharing" target="_blank" rel="noopener"
+                   style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--hmnd-blue); color:#fff; font-weight:500; font-size:13px; text-decoration:none;">
+                    <i class="fa-solid fa-file-lines"></i> Open full strategy
+                </a>
+                <button onclick="closeDrawer()"
+                        style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--surface); color:var(--hmnd-navy); font-family:inherit; font-weight:500; font-size:13px; border:1px solid var(--border); cursor:pointer;">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </button>
+            </div>
         </div>
     </aside>
 
