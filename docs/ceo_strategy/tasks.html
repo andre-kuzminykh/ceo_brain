@@ -1022,11 +1022,311 @@ end
             </div>
         </section>
 
-                <!-- TO-BE view (filled in Step 6) -->
+                <!-- TO-BE view -->
         <section id="view-tobe" class="view-section">
-            <div class="diagram-container" style="padding:60px; color:var(--text-dim); font-weight:300;">
-                <i class="fa-solid fa-clock" style="color:var(--hmnd-blue); font-size:22px; display:block; margin-bottom:12px;"></i>
-                TO-BE content for Tasks will be added in the next batch (Step 6).
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+autonumber
+
+box rgb(248, 250, 252) Systems
+participant EML as Email
+participant LKD as LinkedIn
+participant WAP as WhatsApp
+participant TGM as Telegram
+participant SLK as Slack
+participant HBS as HubSpot
+participant FST as Fundraising Status
+participant NIN as NEW Intros + Banks
+participant FLW as Followers
+participant LID as Investor file
+participant WSH as Wishlists &amp; outreach
+participant GCL as Google Calendar
+participant FRK as Fundraising calendar
+participant FFL as Fireflies
+participant DTR as Data Room
+participant CHK as Task Orchestrator / Daily Checklist
+end
+
+box rgb(238, 242, 255) AI Layer
+participant TSK as Tasks
+end
+
+box rgb(254, 242, 242) Internal
+participant COO as CEO Office
+end
+
+Note over TSK: Tasks auto-extracts tasks from emails, messages, meetings and summaries
+Note over TSK: Suggests owner, due, action type, dependencies and controls ack, status, overdue, duplicates and missing owner
+
+loop Daily — collect signals and updates
+    par Inbound channels monitoring
+        TSK->>EML: Check inbox
+        EML-->>TSK: New emails and follow-ups
+        TSK->>LKD: Check messages
+        LKD-->>TSK: New messages
+        TSK->>WAP: Check WhatsApp
+        WAP-->>TSK: New messages
+        TSK->>TGM: Check chats and voice notes
+        TGM-->>TSK: New messages and asks
+        TSK->>SLK: Check discussions and statuses
+        SLK-->>TSK: New updates
+    and Trackers and calendar monitoring
+        TSK->>FST: Check statuses and next steps
+        FST-->>TSK: Open actions, dates, blockers
+        TSK->>NIN: Check early stages
+        NIN-->>TSK: Pending intros and follow-ups
+        TSK->>FLW: Check active funds
+        FLW-->>TSK: Replies, stages, pending actions
+        TSK->>LID: Check investor file
+        LID-->>TSK: Communications and statuses
+        TSK->>WSH: Check outreach and wishlist
+        WSH-->>TSK: Replies and pending follow-up
+        TSK->>GCL: Check meetings
+        GCL-->>TSK: Today and upcoming meetings
+        TSK->>FRK: Check fundraising calendar
+        FRK-->>TSK: Meeting history, summary, next step
+    end
+
+    TSK->>TSK: Aggregate signals into draft task / event list
+    TSK->>TSK: Classify signals [reply / follow-up / reminder / intro / NDA / Data Room / edits / meeting prep]
+end
+
+loop Per signal, meeting, reply or summary
+    TSK->>TSK: Determine entity, action type and priority
+
+    alt Source = email / message / reply
+        TSK->>HBS: Search history, thread and template
+        HBS-->>TSK: Thread, template, prior context
+    else Source = meeting
+        TSK->>FRK: Check meeting history
+        FRK-->>TSK: Summary, next step, owner
+    else Source = transcript / summary
+        TSK->>FFL: Fetch transcript
+        alt Transcript available
+            FFL-->>TSK: Meeting transcript
+            TSK->>TSK: Build summary, follow-up and suggested task
+        else Transcript missing
+            TSK->>TSK: Build summary from notes and calendar context
+        end
+    end
+
+    TSK->>TSK: Suggested owner [CEO Office / Alina / Dima / Yohann]
+    TSK->>TSK: Due date, action type, priority, dependencies
+
+    alt Document context needed
+        TSK->>DTR: Check NDA / Data Room / access / edits
+        DTR-->>TSK: Document status and related actions
+    else Not needed
+        TSK->>TSK: Use base context
+    end
+
+    TSK->>CHK: Create or update task [title / entity / owner / due / status / dependencies / source / action type]
+    CHK-->>TSK: Task created or updated
+
+    alt Duplicate or recurring task
+        TSK->>CHK: Check related open tasks
+        CHK-->>TSK: Duplicates / related / recurring found
+        TSK->>CHK: Merge, link or correct task
+        CHK-->>TSK: Tasks normalised
+    else No duplicates
+        TSK->>TSK: Confirm new task
+    end
+
+    TSK-->>COO: Suggested task [what / owner / due / action type / dependencies / source]
+end
+
+loop Ack / status / execution control
+    TSK->>CHK: Check open tasks per owner
+    CHK-->>TSK: Open tasks, ack, due, status, dependencies, overdue
+
+    alt No ack or owner not confirmed
+        TSK->>CHK: Mark pending ack and escalate
+        CHK-->>TSK: Pending ack updated
+        TSK-->>COO: Alert [no ack / owner not confirmed]
+    else Ack received
+        TSK->>TSK: Mark task as in execution
+    end
+
+    alt Dependency or blocker
+        TSK->>CHK: Mark blocked / waiting dependency
+        CHK-->>TSK: Status blocked updated
+        TSK-->>COO: Alert [blocked / waiting dependency]
+    else No blocker
+        TSK->>TSK: Continue execution control
+    end
+
+    alt Reply / follow-up fact required
+        TSK->>HBS: Check reply / follow-up fact
+        HBS-->>TSK: Reply sent / no reply / awaiting feedback
+        TSK->>CHK: Update task status
+        CHK-->>TSK: Status updated
+    else No external reply required
+        TSK->>TSK: Internal execution control
+    end
+end
+
+loop Daily roll-up and control
+    TSK->>CHK: Aggregate tasks from all sources
+    CHK-->>TSK: Unified open task list by owner, due and status
+
+    TSK->>TSK: Check overdue, no-owner, pending ack, missing follow-up and recurring tasks
+    TSK->>TSK: Check tasks with gap &gt; 10 days, missing response and stalled execution
+
+    alt Critical tails or signal-loss risk
+        TSK->>CHK: Mark alarm / escalate / urgent follow-up
+        CHK-->>TSK: Critical tasks and escalations updated
+        TSK-->>COO: Escalation pack [urgent / overdue / no owner / missing response / duplicates]
+    else No critical tails
+        TSK-->>COO: Daily task status [no critical issues]
+    end
+end
+
+loop Weekly execution review
+    COO->>TSK: Trigger weekly task review
+    TSK->>FRK: Sync fundraising meetings, summaries and next steps
+    TSK->>FST: Sync open follow-ups and pending replies
+    TSK->>CHK: Update unified open task list
+    CHK-->>TSK: Overdue, no owner, pending ack, blocked, recurring
+
+    TSK->>TSK: Analyse execution by owner, action type and tail items
+    TSK->>TSK: Check systemic issues [duplicates / stalled follow-up / no owner / missed dependencies]
+    TSK-->>COO: Weekly task review [owner load / overdue / blocked / duplicates / no owner / execution gaps]
+end
+                </pre>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-flag-checkered"></i> 1. Process Goal (TO-BE)</div>
+                <p class="text-block">Tasks is a single agent that <strong>extracts every task automatically</strong> from emails, messages, meetings and summaries, proposes owner / due / action type / dependencies, and controls ack, status, overdue, duplicates and missing owner in real time. CEO Office consumes suggested tasks, alerts and weekly reviews instead of running the orchestration by hand.</p>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-layer-group"></i> 2. Process description</div>
+                <div class="timeline">
+                    <div class="step">
+                        <span class="step-owner">Tasks</span>
+                        <h4>A. Auto signal collection + classification</h4>
+                        <p>Monitors Email, LinkedIn, WhatsApp, Telegram, Slack, fund and outreach trackers and both calendars in parallel; aggregates into a draft task list and classifies every signal (reply / follow-up / reminder / intro / NDA / Data Room / edits / meeting prep).</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Tasks</span>
+                        <h4>B. Source context and summary</h4>
+                        <p>For emails pulls HubSpot thread and template, for meetings pulls FRK history, for transcripts pulls Fireflies and generates summary + follow-up + suggested task (builds summary from notes + calendar if transcript is missing).</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Tasks</span>
+                        <h4>C. Suggested owner, due, priority, dependencies</h4>
+                        <p>Auto-suggests owner (CEO Office / Alina / Dima / Yohann), due date, action type, priority and dependencies. Pulls Data Room context only when document action is implied.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Tasks → CHK</span>
+                        <h4>D. Create / update task with dedup</h4>
+                        <p>Creates or updates the task record (title / entity / owner / due / status / dependencies / source / action type). Automatic duplicate / recurring detection merges or normalises related open tasks.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Tasks → CEO Office</span>
+                        <h4>E. Suggested task pack</h4>
+                        <p>Sends a suggested task to CEO Office — what to do, owner, due, action type, dependencies, source — so decision-making is instant.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Tasks</span>
+                        <h4>F. Ack / status / execution control with alerts</h4>
+                        <p>Continuously checks ack, dependencies and reply-fact; emits alerts to CEO Office on missing ack / blocked / waiting dependency and keeps the task status in sync with HubSpot reply events.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Tasks</span>
+                        <h4>G. Daily roll-up + escalation pack</h4>
+                        <p>Checks overdue, no-owner, pending ack, missing follow-up, gap &gt; 10 days and stalled execution. If critical tails exist — sends an escalation pack; otherwise confirms clean daily status.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">CEO Office → Tasks</span>
+                        <h4>H. Weekly task review pack</h4>
+                        <p>On weekly trigger: syncs meetings, fund follow-ups and the unified task list; analyses execution by owner, action type and tails; returns a weekly task review covering owner load, overdue, blocked, duplicates, no-owner and execution gaps.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-users"></i> 3. Roles &amp; responsibility (RACI)</div>
+                <div class="grid-3">
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="role-info">
+                            <h5>CEO Office</h5>
+                            <p>Consumes suggested tasks, alerts, escalation packs and weekly reviews. Approves reassignment when the agent surfaces risk.</p>
+                        </div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-list-check"></i></div>
+                        <div class="role-info">
+                            <h5>Tasks</h5>
+                            <p>Extracts, classifies, assigns, dedups and controls every task. Runs daily roll-up and weekly review automatically.</p>
+                        </div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-database"></i></div>
+                        <div class="role-info">
+                            <h5>Task Orchestrator (CHK)</h5>
+                            <p>Auto-updated task store — merges duplicates, reflects owner / due / status / escalation flags.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-server"></i> 4. Systems (TO-BE architecture)</h4>
+                    <ul>
+                        <li><strong>Tasks agent</strong> — extraction, classification, assignment, dedup, execution control.</li>
+                        <li><strong>Email / LinkedIn / WhatsApp / Telegram / Slack</strong> — channel signals.</li>
+                        <li><strong>HubSpot</strong> — thread and reply-fact context.</li>
+                        <li><strong>FST / NIN / FLW / LID / WSH</strong> — fund and outreach trackers.</li>
+                        <li><strong>GCL / FRK</strong> — meeting calendars.</li>
+                        <li><strong>Fireflies</strong> — transcripts; Tasks builds the summary directly.</li>
+                        <li><strong>Data Room</strong> — document context.</li>
+                        <li><strong>Task Orchestrator / Daily Checklist (CHK)</strong> — unified task store.</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-file-contract"></i> 5. Artifacts</h4>
+                    <ul>
+                        <li><strong>Suggested task</strong> — what / owner / due / action type / dependencies / source.</li>
+                        <li><strong>Unified open task list</strong> — per owner / due / status.</li>
+                        <li><strong>Alerts</strong> — no ack / blocked / waiting dependency.</li>
+                        <li><strong>Escalation pack</strong> — urgent / overdue / no owner / missing response / duplicates.</li>
+                        <li><strong>Daily task status</strong> — clean or issues.</li>
+                        <li><strong>Weekly task review</strong> — owner load / overdue / blocked / duplicates / execution gaps.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-chart-pie"></i> 6. Metrics (Target)</div>
+                <table class="custom-table">
+                    <thead>
+                        <tr><th>Metric</th><th>Target</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><span class="highlight-text">Task extraction</span></td><td><strong>100% automatic</strong> — every signal becomes a task without manual triage.</td></tr>
+                        <tr><td><span class="highlight-text">Owner suggestion</span></td><td>Seconds per signal — rule-based + context-aware.</td></tr>
+                        <tr><td><span class="highlight-text">Duplicate detection</span></td><td>Real-time — duplicates and recurring tasks are merged before they reach the owner.</td></tr>
+                        <tr><td><span class="highlight-text">Escalation latency</span></td><td>On the moment of deviation — not at the next roll-up.</td></tr>
+                        <tr><td><span class="highlight-text">Reply-fact tracking</span></td><td>Continuous — HubSpot events update task status automatically.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section-box" style="background: transparent; border: none; padding: 0; box-shadow: none;">
+                <div class="section-title"><i class="fa-solid fa-rocket"></i> 7. Initiative (automation point)</div>
+                <button class="initiative-card" onclick="openDrawer()">
+                    <div class="init-icon"><i class="fa-solid fa-list-check"></i></div>
+                    <div class="init-text">
+                        <h5>Tasks — Automated Extraction &amp; Execution Control</h5>
+                        <p>Auto-extracts tasks from every signal, suggests owner / due / action type / dependencies, deduplicates in real time and keeps ack, status and escalations under continuous control.</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-right init-arrow"></i>
+                </button>
             </div>
         </section>
     </main>
@@ -1037,8 +1337,48 @@ end
         <div class="drawer-head">
             <button class="drawer-close" onclick="closeDrawer()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
             <span class="drawer-badge"><i class="fa-solid fa-bolt"></i> Module 03</span>
-            <h2 class="drawer-title">Tasks initiative</h2>
-            <p class="drawer-subtitle">Drawer content will be filled in Step 6 when the TO-BE view is added.</p>
+            <h2 class="drawer-title">Tasks — Automated Extraction &amp; Execution Control</h2>
+            <p class="drawer-subtitle">Auto-extracts tasks from emails, chats, meetings and summaries, assigns owner, due and action type, and drives every assignment to a result with real-time ack, dependency and escalation control.</p>
+            <div class="drawer-meta">
+                <span class="drawer-chip effect"><i class="fa-solid fa-bullseye"></i> Productivity</span>
+                <span class="drawer-chip date"><i class="fa-solid fa-calendar-day"></i> May 6, 2026</span>
+                <span class="drawer-chip"><i class="fa-solid fa-hashtag"></i> № 03</span>
+            </div>
+        </div>
+        <div class="drawer-body">
+            <h4 class="drawer-section-title">What this module does</h4>
+            <p style="font-size:14px; color:var(--text-main); line-height:1.65; margin:0 0 24px; font-weight:300;">
+                Tasks automatically extracts tasks from emails, messages, meetings and summaries; assigns owner, track and due date. It provides the single execution control loop: status, dependencies, reply fact, overdue, duplicates and no-owner items — so nothing is lost and every assignment is driven to a result.
+            </p>
+
+            <h4 class="drawer-section-title">User stories</h4>
+            <ol class="story-list">
+                <li><span>From an email, message, meeting or summary a task is created automatically with suggested owner, due date and action type — nothing is lost.</span></li>
+                <li><span>The agent suggests the owner — CEO Office, Alina, Dima or Yohann — to distribute work faster.</span></li>
+                <li><span>Get clear tasks for NDA, Data Room, revisions and follow-ups — you immediately know what to do.</span></li>
+                <li><span>See per-task ack, due date, status, dependencies and reply fact — to control assignments across all owners.</span></li>
+                <li><span>See the unified open-task list, per-owner tasks, recurring tasks, overdue and no-owner items — to escalate and close tails fast.</span></li>
+            </ol>
+
+            <h4 class="drawer-section-title">Delivery requirements</h4>
+            <ul class="req-list">
+                <li><i class="fa-solid fa-check"></i> Signal-to-task extraction across Email, LinkedIn, WhatsApp, Telegram, Slack, HubSpot, FST / NIN / FLW / LID / WSH, GCL, FRK, Fireflies and Data Room.</li>
+                <li><i class="fa-solid fa-check"></i> Task schema: title, entity, suggested owner, due date, status, dependencies, source, action type.</li>
+                <li><i class="fa-solid fa-check"></i> Ack and escalation flow: no ack / pending ack / blocked / waiting dependency / reply received.</li>
+                <li><i class="fa-solid fa-check"></i> Duplicate detection and task merging.</li>
+                <li><i class="fa-solid fa-check"></i> Daily and weekly task review packs for CEO Office.</li>
+            </ul>
+
+            <div style="margin-top: 28px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="https://docs.google.com/spreadsheets/d/1QiCLAk5O0tma55ZGNQyAXRNfP-oxS0OC9Y8H_b4SMvo/edit?usp=sharing" target="_blank" rel="noopener"
+                   style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--hmnd-blue); color:#fff; font-weight:500; font-size:13px; text-decoration:none;">
+                    <i class="fa-solid fa-file-lines"></i> Open full strategy
+                </a>
+                <button onclick="closeDrawer()"
+                        style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--surface); color:var(--hmnd-navy); font-family:inherit; font-weight:500; font-size:13px; border:1px solid var(--border); cursor:pointer;">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </button>
+            </div>
         </div>
     </aside>
 
