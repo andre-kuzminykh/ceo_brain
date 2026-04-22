@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email — CEO Brain Strategy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --hmnd-navy: #06091c;
+            --hmnd-blue: #4953d8;
+            --hmnd-blue-dark: #3b44b5;
+            --hmnd-bg-blue: rgba(73, 83, 216, 0.05);
+            --accent-red: #ef4444;
+            --accent-red-bg: rgba(239, 68, 68, 0.05);
+            --text-main: #06091c;
+            --text-dim: #64748b;
+            --surface: #ffffff;
+            --surface-soft: #f8fafc;
+            --border: #e2e8f0;
+            --shadow-sm: 0 4px 15px -5px rgba(6, 9, 28, 0.04);
+            --shadow-md: 0 10px 30px -10px rgba(6, 9, 28, 0.06);
+            --sidebar-w: 280px;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: var(--surface);
+            color: var(--text-main);
+            font-family: 'Outfit', system-ui, sans-serif;
+            font-weight: 300;
+            height: 100vh;
+            overflow: hidden;
+        }
+        body { display: flex; }
+
+        /* ========== Sidebar ========== */
+        aside.sidebar {
+            width: var(--sidebar-w);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 36px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex-shrink: 0;
+            overflow-y: auto;
+            z-index: 110;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--hmnd-navy);
+            margin-bottom: 36px;
+            letter-spacing: 0.3px;
+        }
+        .logo-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--hmnd-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px var(--hmnd-bg-blue);
+            flex-shrink: 0;
+        }
+        .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin: 16px 0 8px 12px;
+            letter-spacing: 0.12em;
+        }
+        .nav-item {
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            font-weight: 400;
+            text-decoration: none;
+            border: 1px solid transparent;
+        }
+        .nav-item:hover { background: var(--hmnd-bg-blue); color: var(--hmnd-blue); }
+        .nav-item.active {
+            background: var(--hmnd-bg-blue);
+            color: var(--hmnd-blue);
+            font-weight: 500;
+            border-color: rgba(73, 83, 216, 0.15);
+        }
+        .nav-item i { width: 16px; text-align: center; }
+
+        /* ========== Main + Header + Toggle ========== */
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 36px 56px 60px;
+            background: var(--surface);
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .header-title-wrap {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        .back-btn:hover {
+            border-color: var(--hmnd-blue);
+            color: var(--hmnd-blue);
+            transform: translateX(-2px);
+        }
+        h1 {
+            font-size: 30px;
+            font-weight: 300;
+            margin: 0;
+            line-height: 1.1;
+            color: var(--hmnd-navy);
+            letter-spacing: -0.5px;
+        }
+        h1 .accent { color: var(--hmnd-blue); font-weight: 400; }
+        .subtitle {
+            margin: 8px 0 0;
+            color: var(--text-dim);
+            font-size: 14px;
+            line-height: 1.55;
+            max-width: 640px;
+            font-weight: 300;
+        }
+        .uppercase-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--hmnd-blue);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        /* AS-IS / TO-BE toggle */
+        .toggle-switch {
+            display: inline-flex;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 4px;
+            flex-shrink: 0;
+        }
+        .toggle-btn {
+            padding: 9px 22px;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            color: var(--text-dim);
+            background: transparent;
+            border: none;
+        }
+        .toggle-btn.active.asis {
+            background: var(--surface);
+            color: var(--accent-red);
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.12);
+        }
+        .toggle-btn.active.tobe {
+            background: var(--surface);
+            color: var(--hmnd-blue);
+            box-shadow: 0 4px 10px rgba(73, 83, 216, 0.12);
+        }
+
+        /* View animations */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.35s ease forwards;
+        }
+        .view-section.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== Diagram container ========== */
+        .diagram-container {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ========== Section box ========== */
+        .section-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px 26px;
+            margin-bottom: 22px;
+            box-shadow: var(--shadow-sm);
+        }
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--hmnd-navy);
+            letter-spacing: 0.1em;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title i { font-size: 14px; color: var(--hmnd-blue); }
+        .section-title i.asis-icon { color: var(--accent-red); }
+        .text-block {
+            font-size: 14px;
+            line-height: 1.65;
+            color: var(--text-main);
+            margin: 0;
+            font-weight: 300;
+        }
+        .text-block strong { font-weight: 500; }
+
+        /* ========== Grids ========== */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px;
+        }
+
+        /* ========== Info card (Systems / Artifacts) ========== */
+        .info-card {
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px;
+        }
+        .info-card h4 {
+            margin: 0 0 12px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--hmnd-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .info-card.asis h4 { color: var(--accent-red); }
+        .info-card ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .info-card ul li {
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-main);
+            padding-left: 16px;
+            position: relative;
+            font-weight: 300;
+        }
+        .info-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 5px;
+            height: 5px;
+            background: var(--hmnd-blue);
+            border-radius: 50%;
+        }
+        .info-card.asis ul li::before { background: var(--accent-red); }
+        .info-card ul li strong { font-weight: 500; color: var(--hmnd-navy); }
+
+        /* ========== Role card ========== */
+        .role-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+        }
+        .role-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--hmnd-bg-blue);
+            color: var(--hmnd-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .role-icon.asis-role {
+            background: var(--accent-red-bg);
+            color: var(--accent-red);
+        }
+        .role-info h5 {
+            margin: 0 0 4px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--hmnd-navy);
+        }
+        .role-info p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.5;
+            font-weight: 300;
+        }
+
+        /* ========== Custom table ========== */
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 4px;
+        }
+        .custom-table th {
+            text-align: left;
+            padding: 12px 14px;
+            border-bottom: 2px solid var(--border);
+            color: var(--text-dim);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+        }
+        .custom-table td {
+            padding: 14px;
+            border-bottom: 1px solid var(--surface-soft);
+            font-size: 13px;
+            color: var(--text-main);
+            vertical-align: top;
+            line-height: 1.5;
+            font-weight: 300;
+        }
+        .custom-table tr:last-child td { border-bottom: none; }
+        .custom-table tr:hover td { background: var(--surface-soft); }
+        .highlight-text {
+            font-weight: 500;
+            color: var(--hmnd-navy);
+            background: var(--surface-soft);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        /* ========== Timeline / steps ========== */
+        .timeline {
+            border-left: 2px solid var(--border);
+            margin-left: 18px;
+            padding-left: 28px;
+            position: relative;
+        }
+        .step {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        .step:last-child { margin-bottom: 0; }
+        .step::before {
+            content: '';
+            position: absolute;
+            left: -35px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 2px solid var(--hmnd-blue);
+        }
+        .step.asis-step::before { border-color: var(--accent-red); }
+        .step-owner {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--hmnd-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: var(--hmnd-bg-blue);
+            padding: 4px 10px;
+            border-radius: 999px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+        .step.asis-step .step-owner {
+            color: var(--accent-red);
+            background: var(--accent-red-bg);
+        }
+        .step h4 {
+            margin: 0 0 6px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--hmnd-navy);
+        }
+        .step p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+        .step p strong { font-weight: 500; color: var(--hmnd-navy); }
+
+        /* ========== Pain point ========== */
+        .pain-point {
+            border-left: 4px solid var(--accent-red);
+            background: var(--accent-red-bg);
+            padding: 18px 20px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 12px;
+        }
+        .pain-point:last-child { margin-bottom: 0; }
+        .pain-point h5 {
+            margin: 0 0 6px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-red);
+        }
+        .pain-point p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.55;
+            color: var(--text-main);
+            font-weight: 300;
+        }
+
+        /* ========== Initiative card ========== */
+        .initiative-card {
+            border: 1px solid var(--hmnd-blue);
+            background: var(--hmnd-bg-blue);
+            padding: 24px 26px;
+            border-radius: 16px;
+            display: flex;
+            gap: 22px;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-family: inherit;
+            color: inherit;
+            width: 100%;
+        }
+        .initiative-card:hover {
+            transform: translateY(-3px);
+            background: var(--surface);
+            box-shadow: 0 12px 28px rgba(73, 83, 216, 0.12);
+        }
+        .init-icon {
+            font-size: 22px;
+            color: var(--hmnd-blue);
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(73, 83, 216, 0.15);
+        }
+        .init-text { flex: 1; }
+        .init-text h5 {
+            margin: 0 0 4px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--hmnd-navy);
+        }
+        .init-text p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.55;
+            font-weight: 300;
+        }
+        .init-arrow {
+            color: var(--hmnd-blue);
+            font-size: 14px;
+        }
+
+        /* ========== Drawer ========== */
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(6, 9, 28, 0.3);
+            backdrop-filter: blur(3px);
+            z-index: 1999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .drawer-overlay.active { opacity: 1; visibility: visible; }
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 640px;
+            max-width: 100%;
+            background: var(--surface);
+            z-index: 2000;
+            transform: translateX(100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -30px 0 80px rgba(6, 9, 28, 0.15);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .drawer.active { transform: translateX(0); }
+        .drawer-head {
+            padding: 36px 40px 24px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+        .drawer-close {
+            position: absolute;
+            top: 22px;
+            right: 22px;
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-dim);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .drawer-close:hover { color: var(--hmnd-navy); border-color: var(--hmnd-navy); }
+        .drawer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 12px;
+            background: var(--hmnd-bg-blue);
+            color: var(--hmnd-blue);
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 14px;
+        }
+        .drawer-title {
+            font-size: 26px;
+            font-weight: 400;
+            color: var(--hmnd-navy);
+            margin: 0 0 8px;
+            letter-spacing: -0.4px;
+        }
+        .drawer-subtitle {
+            font-size: 14px;
+            color: var(--text-dim);
+            margin: 0 0 18px;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+        .drawer-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+        .drawer-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 14px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-main);
+        }
+        .drawer-chip.effect {
+            background: var(--hmnd-navy);
+            color: #fff;
+            border-color: var(--hmnd-navy);
+        }
+        .drawer-chip.date {
+            color: var(--hmnd-blue);
+            border-color: rgba(73, 83, 216, 0.25);
+            background: var(--hmnd-bg-blue);
+        }
+        .drawer-body { padding: 26px 40px 40px; }
+        .drawer-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-dim);
+            margin: 0 0 14px;
+        }
+        .story-list {
+            list-style: none;
+            margin: 0 0 26px;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            counter-reset: story;
+        }
+        .story-list li {
+            display: grid;
+            grid-template-columns: 30px 1fr;
+            gap: 12px;
+            align-items: flex-start;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+        }
+        .story-list li::before {
+            counter-increment: story;
+            content: counter(story);
+            background: var(--hmnd-blue);
+            color: #fff;
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .story-list li span {
+            font-size: 13px;
+            line-height: 1.55;
+            color: var(--hmnd-navy);
+            font-weight: 300;
+        }
+        .req-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .req-list li {
+            font-size: 13px;
+            color: var(--text-main);
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            line-height: 1.55;
+            font-weight: 300;
+        }
+        .req-list li i {
+            color: var(--hmnd-blue);
+            margin-top: 4px;
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-dot"></div>
+            <span>CEO BRAIN</span>
+        </div>
+
+        <a href="index.html" class="nav-item"><i class="fa-solid fa-grip"></i> Overview</a>
+        <a href="index.html#roadmap" class="nav-item"><i class="fa-solid fa-route"></i> Roadmap 2026</a>
+
+        <div class="nav-label">AI Modules</div>
+        <a href="ai-memory.html" class="nav-item"><i class="fa-solid fa-brain"></i> AI Memory</a>
+        <a href="performance.html" class="nav-item"><i class="fa-solid fa-gauge-high"></i> Performance</a>
+        <a href="tasks.html" class="nav-item"><i class="fa-solid fa-list-check"></i> Tasks</a>
+        <a href="notes.html" class="nav-item"><i class="fa-solid fa-note-sticky"></i> Notes</a>
+        <a href="calendar.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Calendar</a>
+        <a href="email.html" class="nav-item active"><i class="fa-solid fa-envelope"></i> Email</a>
+        <a href="docs.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Docs</a>
+        <a href="tables.html" class="nav-item"><i class="fa-solid fa-table"></i> Tables</a>
+        <a href="slides.html" class="nav-item"><i class="fa-solid fa-chalkboard"></i> Slides</a>
+        <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-column"></i> Reports</a>
+
+        <div class="nav-label">Resources</div>
+        <a href="https://docs.google.com/spreadsheets/d/1QiCLAk5O0tma55ZGNQyAXRNfP-oxS0OC9Y8H_b4SMvo/edit?usp=sharing" target="_blank" rel="noopener" class="nav-item">
+            <i class="fa-solid fa-up-right-from-square"></i> Strategy doc
+        </a>
+    </aside>
+
+    <main>
+        <div class="page-header">
+            <div class="header-title-wrap">
+                <a href="index.html" class="back-btn" aria-label="Back to overview">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div>
+                    <span class="uppercase-label"><i class="fa-solid fa-envelope"></i> Module 06 · Reply coverage, quality &amp; speed</span>
+                    <h1><span class="accent">Email</span></h1>
+                    <p class="subtitle">From manually sweeping five channels and drafting every reply by hand — to a communication copilot that normalises every signal, drafts routine replies automatically and escalates important investor messages for human review.</p>
+                </div>
+            </div>
+            <div class="toggle-switch" role="tablist">
+                <button class="toggle-btn asis active" id="btn-asis" onclick="switchView('asis')">AS-IS</button>
+                <button class="toggle-btn tobe" id="btn-tobe" onclick="switchView('tobe')">TO-BE</button>
+            </div>
+        </div>
+
+                <!-- AS-IS view -->
+        <section id="view-asis" class="view-section active">
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+autonumber
+
+box rgb(248, 250, 252) External
+participant EXT as Funds / partners / contacts
+end
+
+box rgb(248, 250, 252) Systems
+participant EML as Email
+participant LKD as LinkedIn
+participant WAP as WhatsApp
+participant TGM as Telegram
+participant SLK as Slack
+participant HBS as HubSpot
+participant FST as Fundraising Status
+participant NIN as NEW Intros + Banks
+participant FLW as Followers
+participant LID as Investor file
+participant WSH as Wishlists &amp; outreach
+participant GCL as Google Calendar
+end
+
+box rgb(254, 242, 242) Internal
+participant COO as CEO Office
+end
+
+Note over COO: CEO Office is the single communication copilot
+Note over COO: Suggested owner = CEO Office / Alina / Dima / Yohann
+
+loop Daily — communications monitoring
+    par Channel monitoring
+        COO->>EML: Check inbox
+        EML-->>COO: New emails and replies
+        COO->>LKD: Check LinkedIn
+        LKD-->>COO: New messages
+        COO->>WAP: Check WhatsApp
+        WAP-->>COO: New messages
+        COO->>TGM: Check Telegram messages and voice
+        TGM-->>COO: New messages
+        COO->>SLK: Check work conversations and statuses
+        SLK-->>COO: New messages and updates
+    and Status-source context
+        COO->>FST: Check overall fund status
+        FST-->>COO: Stage, next step, last touch
+        COO->>NIN: Check early stage
+        NIN-->>COO: Interest, date, pending follow-up
+        COO->>FLW: Check active stage
+        FLW-->>COO: Replies, stage, follow-up
+        COO->>LID: Check investor history
+        LID-->>COO: Prior communication
+        COO->>WSH: Check outreach and wishlist
+        WSH-->>COO: Outreach history and replies
+        COO->>GCL: Check meetings and nearest touches
+        GCL-->>COO: Meetings and related touches
+    end
+
+    COO->>COO: Aggregate new signals into a single inbox stream
+end
+
+loop Per new message or thread
+    COO->>COO: Determine entity [fund / contact / company / thread]
+    COO->>COO: Normalise signal [source / fund / contact / role / company / AUM / date / link / event type]
+
+    alt Source = Email
+        COO->>HBS: Search email thread history and templates
+        HBS-->>COO: Prior thread, templates and comms history
+    else Source = LinkedIn
+        COO->>HBS: Search related contact and history
+        HBS-->>COO: Communication history
+    else Source = Telegram / WhatsApp / Slack
+        COO->>COO: Parse message and look up context manually
+    end
+
+    COO->>FST: Check current fund stage
+    FST-->>COO: Stage, next step, date
+    COO->>NIN: Check early stage if needed
+    NIN-->>COO: Interest and follow-up
+    COO->>FLW: Check active stage if needed
+    FLW-->>COO: Status and replies
+    COO->>LID: Check prior investor context
+    LID-->>COO: Investor history
+
+    COO->>COO: Classify signal [new inbound / reply / follow-up / reminder / meeting / NDA / Data Room / intro]
+    COO->>COO: Suggested owner [CEO Office / Alina / Dima / Yohann]
+
+    COO->>COO: Build Russian Telegram-summary [who / role / company / AUM / gist / full translation / history / suggested owner]
+end
+
+loop Per message that needs a reply
+    COO->>HBS: Find recommended template, prior thread and suggested follow-up
+    HBS-->>COO: Template, prior thread, history
+
+    alt Routine follow-up / slots / reminder
+        alt Channel = Email
+            COO->>COO: Build auto reply draft
+            COO->>EML: Send follow-up / slots / reminder
+            EML-->>EXT: Reply sent
+        else Channel = LinkedIn
+            COO->>COO: Build auto message draft
+            COO->>LKD: Send message
+            LKD-->>EXT: Reply sent
+        else Channel = Telegram / WhatsApp
+            COO->>COO: Build suggested reply for manual send
+        end
+    else Important personalised reply to investor
+        COO->>COO: Build personalised draft
+        COO->>COO: Mandatory human review inside CEO Office
+        alt Draft approved
+            COO->>EML: Send final email
+            EML-->>EXT: Reply sent
+        else Needs edits
+            COO->>COO: Revise personalised draft
+        end
+    end
+end
+
+loop After sending a communication
+    COO->>FST: Update overall status [replied / reminded / waiting feedback]
+    alt Fund in early stage
+        COO->>NIN: Update [date / reminder / owner]
+    else Fund in active stage
+        COO->>FLW: Update [follow-up / owner / status]
+    end
+    COO->>LID: Update investor history if needed
+    LID-->>COO: History updated
+end
+
+loop Daily communications digest
+    COO->>COO: Collect summary of new inbound
+    COO->>COO: Translate and paraphrase in Russian
+    COO->>COO: Check suggested owners, pending replies and awaited feedback
+    COO->>COO: Build list [who to reply / who to remind / who is waiting feedback / which important emails need human review]
+end
+                </pre>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-bullseye asis-icon"></i> 1. Process Goal</div>
+                <p class="text-block">Keep reply coverage, quality and speed under control across five channels (Email, LinkedIn, WhatsApp, Telegram, Slack). CEO Office sweeps every channel, normalises each signal, builds a Russian Telegram-summary, drafts routine replies and runs human review for important investor communications.</p>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-list-ol asis-icon"></i> 2. Process description</div>
+                <div class="timeline">
+                    <div class="step asis-step">
+                        <span class="step-owner">CEO Office</span>
+                        <h4>Step 1. Monitor channels + status sources</h4>
+                        <p>Sweep Email, LinkedIn, WhatsApp, Telegram and Slack; pull stage context from FST / NIN / FLW / LID, outreach history from Wishlists, and nearest meetings from Google Calendar.</p>
+                    </div>
+                    <div class="step asis-step">
+                        <span class="step-owner">CEO Office</span>
+                        <h4>Step 2. Aggregate into a single inbox stream</h4>
+                        <p>Consolidate every new signal into one stream to stop losing messages between channels.</p>
+                    </div>
+                    <div class="step asis-step">
+                        <span class="step-owner">CEO Office</span>
+                        <h4>Step 3. Per message: entity + normalisation</h4>
+                        <p>Determine entity (fund / contact / company / thread) and normalise the signal — source, fund, contact, role, company, AUM, date, link, event type.</p>
+                    </div>
+                    <div class="step asis-step">
+                        <span class="step-owner">CEO Office</span>
+                        <h4>Step 4. Source-specific context lookup</h4>
+                        <p>For Email / LinkedIn pull thread and templates from HubSpot. For Telegram / WhatsApp / Slack — parse manually and cross-reference against available context.</p>
+                    </div>
+                    <div class="step asis-step">
+                        <span class="step-owner">CEO Office</span>
+                        <h4>Step 5. Classify + suggested owner + RU summary</h4>
+                        <p>Classify the signal (new inbound / reply / follow-up / reminder / meeting / NDA / Data Room / intro), pick a suggested owner (CEO Office / Alina / Dima / Yohann) and write a Russian Telegram-summary with sender, role, company, AUM, gist, full translation and history.</p>
+                    </div>
+                    <div class="step asis-step">
+                        <span class="step-owner">CEO Office</span>
+                        <h4>Step 6. Reply drafting</h4>
+                        <p>For routine follow-ups / slots / reminders — build an auto-draft and send via Email / LinkedIn (manual send for Telegram / WhatsApp). For important investor replies — build a personalised draft and run mandatory human review before sending.</p>
+                    </div>
+                    <div class="step asis-step">
+                        <span class="step-owner">CEO Office</span>
+                        <h4>Step 7. Post-send tracker updates</h4>
+                        <p>Update overall status in FST (replied / reminded / waiting feedback) and the stage-specific tracker (NIN for early stage, FLW for active stage); update investor history in LID when relevant.</p>
+                    </div>
+                    <div class="step asis-step">
+                        <span class="step-owner">CEO Office</span>
+                        <h4>Step 8. Daily communications digest</h4>
+                        <p>Compile a daily digest covering who to reply, who to remind, who is waiting for feedback and which important emails still need human review.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-users asis-icon"></i> 3. Roles &amp; responsibility</div>
+                <div class="grid-3">
+                    <div class="role-card">
+                        <div class="role-icon asis-role"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="role-info"><h5>CEO Office</h5><p>Single copilot loop — monitors every channel, normalises signals, drafts replies, runs human review and updates trackers.</p></div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon asis-role"><i class="fa-solid fa-users-gear"></i></div>
+                        <div class="role-info"><h5>Suggested owners</h5><p>CEO Office / Alina / Dima / Yohann — chosen manually per signal.</p></div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon asis-role"><i class="fa-solid fa-database"></i></div>
+                        <div class="role-info"><h5>Trackers + HubSpot</h5><p>Passive stores — updated only after CEO Office completes the reply and logs status changes.</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="info-card asis">
+                    <h4><i class="fa-solid fa-server"></i> 4. Systems (Tools)</h4>
+                    <ul>
+                        <li><strong>Email / LinkedIn / WhatsApp / Telegram / Slack</strong> — five inbound channels.</li>
+                        <li><strong>HubSpot</strong> — thread history and templates.</li>
+                        <li><strong>FST / NIN / FLW / LID</strong> — fund and investor stage trackers.</li>
+                        <li><strong>Wishlists &amp; outreach (WSH)</strong> — outreach history and responses.</li>
+                        <li><strong>Google Calendar</strong> — meetings and nearest touches.</li>
+                    </ul>
+                </div>
+                <div class="info-card asis">
+                    <h4><i class="fa-solid fa-file-contract"></i> 5. Artifacts</h4>
+                    <ul>
+                        <li><strong>Inbox stream</strong> — aggregated signals from every channel.</li>
+                        <li><strong>Normalised signal</strong> — source, fund, contact, role, company, AUM, date, link, event type.</li>
+                        <li><strong>Russian Telegram-summary</strong> — per new message, with suggested owner.</li>
+                        <li><strong>Reply drafts</strong> — auto for routine, personalised for investors with human review.</li>
+                        <li><strong>Daily communications digest</strong> — who to reply / remind / needs review.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-chart-pie asis-icon"></i> 6. Metrics (Observed)</div>
+                <table class="custom-table">
+                    <thead><tr><th>Metric</th><th>Observed value</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="highlight-text">Channel coverage</span></td><td>Manual sweep across five channels — depends on who is on shift.</td></tr>
+                        <tr><td><span class="highlight-text">Signal normalisation</span></td><td>By hand per message — fields often incomplete or missing.</td></tr>
+                        <tr><td><span class="highlight-text">Russian summary</span></td><td>Written one by one — limits the number of messages that get a summary at all.</td></tr>
+                        <tr><td><span class="highlight-text">Template lookup + draft</span></td><td>Manual — depends on memory of prior threads.</td></tr>
+                        <tr><td><span class="highlight-text">Reply-rate / stalled threads</span></td><td>Detected only in the daily digest — late warnings.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-fire asis-icon"></i> 7. Pain points</div>
+                <div class="pain-point"><h5>1. Five channels swept manually</h5><p>Email, LinkedIn, WhatsApp, Telegram and Slack each require a separate manual sweep — messages slip between channels.</p></div>
+                <div class="pain-point"><h5>2. Signal normalisation by hand</h5><p>Every incoming message needs source / fund / contact / role / company / AUM / date / event type tagged manually.</p></div>
+                <div class="pain-point"><h5>3. Russian summaries written one by one</h5><p>Telegram-digest summaries are composed per message, limiting how many messages receive one.</p></div>
+                <div class="pain-point"><h5>4. Reply drafting is manual</h5><p>Even routine follow-ups, slot proposals and reminders require writing — human reviewers become the bottleneck for everything.</p></div>
+                <div class="pain-point"><h5>5. Stalled threads and missing follow-ups surface late</h5><p>Unanswered threads, overdue follow-ups and communication risk only become visible at the end-of-day digest.</p></div>
+            </div>
+        </section>
+
+                <!-- TO-BE view (filled in Step 12) -->
+        <section id="view-tobe" class="view-section">
+            <div class="diagram-container" style="padding:60px; color:var(--text-dim); font-weight:300;">
+                <i class="fa-solid fa-clock" style="color:var(--hmnd-blue); font-size:22px; display:block; margin-bottom:12px;"></i>
+                TO-BE content for Email will be added in the next batch (Step 12).
+            </div>
+        </section>
+    </main>
+
+    <!-- Drawer (content will be added with the initiative in Step 2b) -->
+    <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+        <aside class="drawer" id="drawer" aria-hidden="true">
+        <div class="drawer-head">
+            <button class="drawer-close" onclick="closeDrawer()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            <span class="drawer-badge"><i class="fa-solid fa-bolt"></i> Module 06</span>
+            <h2 class="drawer-title">Email initiative</h2>
+            <p class="drawer-subtitle">Drawer content will be filled in Step 12 when the TO-BE view is added.</p>
+        </div>
+    </aside>
+
+    <script type="module">
+        import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+
+        window.switchView = function (view) {
+            document.getElementById('btn-asis').classList.toggle('active', view === 'asis');
+            document.getElementById('btn-tobe').classList.toggle('active', view === 'tobe');
+            document.getElementById('view-asis').classList.toggle('active', view === 'asis');
+            document.getElementById('view-tobe').classList.toggle('active', view === 'tobe');
+        };
+
+        window.openDrawer = function () {
+            document.getElementById('drawer').classList.add('active');
+            document.getElementById('drawer').setAttribute('aria-hidden', 'false');
+            document.getElementById('drawer-overlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeDrawer = function () {
+            document.getElementById('drawer').classList.remove('active');
+            document.getElementById('drawer').setAttribute('aria-hidden', 'true');
+            document.getElementById('drawer-overlay').classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') window.closeDrawer();
+        });
+    </script>
+</body>
+</html>
