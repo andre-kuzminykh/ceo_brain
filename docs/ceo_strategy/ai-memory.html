@@ -695,13 +695,98 @@
     </style>
 </head>
 <body>
-    <!-- Sidebar will be added in Step 1a.4 -->
-    <!-- Main content (header + views) will be added in Step 1a.5 -->
-    <!-- Drawer + scripts will be added in Step 1a.6 -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-dot"></div>
+            <span>CEO BRAIN</span>
+        </div>
+
+        <a href="index.html" class="nav-item"><i class="fa-solid fa-grip"></i> Overview</a>
+        <a href="index.html#roadmap" class="nav-item"><i class="fa-solid fa-route"></i> Roadmap 2026</a>
+
+        <div class="nav-label">AI Modules</div>
+        <a href="ai-memory.html" class="nav-item active"><i class="fa-solid fa-brain"></i> AI Memory</a>
+        <a href="performance.html" class="nav-item"><i class="fa-solid fa-gauge-high"></i> Performance</a>
+        <a href="tasks.html" class="nav-item"><i class="fa-solid fa-list-check"></i> Tasks</a>
+        <a href="notes.html" class="nav-item"><i class="fa-solid fa-note-sticky"></i> Notes</a>
+        <a href="calendar.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Calendar</a>
+        <a href="email.html" class="nav-item"><i class="fa-solid fa-envelope"></i> Email</a>
+        <a href="docs.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Docs</a>
+        <a href="tables.html" class="nav-item"><i class="fa-solid fa-table"></i> Tables</a>
+        <a href="slides.html" class="nav-item"><i class="fa-solid fa-chalkboard"></i> Slides</a>
+        <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-column"></i> Reports</a>
+
+        <div class="nav-label">Resources</div>
+        <a href="https://docs.google.com/spreadsheets/d/1QiCLAk5O0tma55ZGNQyAXRNfP-oxS0OC9Y8H_b4SMvo/edit?usp=sharing" target="_blank" rel="noopener" class="nav-item">
+            <i class="fa-solid fa-up-right-from-square"></i> Strategy doc
+        </a>
+    </aside>
+
+    <main>
+        <div class="page-header">
+            <div class="header-title-wrap">
+                <a href="index.html" class="back-btn" aria-label="Back to overview">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div>
+                    <span class="uppercase-label"><i class="fa-solid fa-brain"></i> Module 01 · Decision Quality</span>
+                    <h1>AI <span class="accent">Memory</span></h1>
+                    <p class="subtitle">From manual context lookup across HubSpot, trackers, calendars, chats and Confluence — to a unified memory graph across funds, people, meetings, threads and documents.</p>
+                </div>
+            </div>
+            <div class="toggle-switch" role="tablist">
+                <button class="toggle-btn asis active" id="btn-asis" onclick="switchView('asis')">AS-IS</button>
+                <button class="toggle-btn tobe" id="btn-tobe" onclick="switchView('tobe')">TO-BE</button>
+            </div>
+        </div>
+
+        <!-- AS-IS view (mermaid + sections will be added in Step 1b and 1c) -->
+        <section id="view-asis" class="view-section active">
+            <!-- AS-IS mermaid diagram -->
+            <!-- AS-IS sections: goal, timeline, roles, systems, artifacts, metrics, pain points -->
+        </section>
+
+        <!-- TO-BE view (mermaid + sections + initiative will be added in Step 2a and 2b) -->
+        <section id="view-tobe" class="view-section">
+            <!-- TO-BE mermaid diagram -->
+            <!-- TO-BE sections: goal, timeline, roles, systems, artifacts, metrics, initiative -->
+        </section>
+    </main>
+
+    <!-- Drawer (content will be added with the initiative in Step 2b) -->
+    <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+    <aside class="drawer" id="drawer" aria-hidden="true">
+        <!-- Drawer content -->
+    </aside>
 
     <script type="module">
         import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
         mermaid.initialize({ startOnLoad: true, theme: 'default' });
+
+        window.switchView = function (view) {
+            document.getElementById('btn-asis').classList.toggle('active', view === 'asis');
+            document.getElementById('btn-tobe').classList.toggle('active', view === 'tobe');
+            document.getElementById('view-asis').classList.toggle('active', view === 'asis');
+            document.getElementById('view-tobe').classList.toggle('active', view === 'tobe');
+        };
+
+        window.openDrawer = function () {
+            document.getElementById('drawer').classList.add('active');
+            document.getElementById('drawer').setAttribute('aria-hidden', 'false');
+            document.getElementById('drawer-overlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeDrawer = function () {
+            document.getElementById('drawer').classList.remove('active');
+            document.getElementById('drawer').setAttribute('aria-hidden', 'true');
+            document.getElementById('drawer-overlay').classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') window.closeDrawer();
+        });
     </script>
 </body>
 </html>
