@@ -983,11 +983,275 @@ end
             </div>
         </section>
 
-                <!-- TO-BE view (filled in Step 20) -->
+                <!-- TO-BE view -->
         <section id="view-tobe" class="view-section">
-            <div class="diagram-container" style="padding:60px; color:var(--text-dim); font-weight:300;">
-                <i class="fa-solid fa-clock" style="color:var(--hmnd-blue); font-size:22px; display:block; margin-bottom:12px;"></i>
-                TO-BE content for Reports will be added in the next batch (Step 20).
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+autonumber
+
+box rgb(248, 250, 252) Systems
+participant EML as Email
+participant LKD as LinkedIn
+participant TGM as Telegram
+participant SLK as Slack
+participant FST as Fundraising Status
+participant NIN as NEW Intros + Banks
+participant FLW as Followers
+participant LID as Investor file
+participant WSH as Wishlists &amp; outreach
+participant GCL as Google Calendar
+participant FRK as Fundraising calendar
+participant CHK as Daily Checklist
+participant RPT as Weekly / Monthly Report
+end
+
+box rgb(238, 242, 255) AI Layer
+participant RPR as Reports
+end
+
+box rgb(254, 242, 242) Internal
+participant COO as CEO Office
+end
+
+Note over RPR: Reports auto-builds daily, weekly and monthly management reports on the fundraising process
+Note over RPR: Pulls data from meetings, tasks, touches, blockers and fund stages; detects deviations and delivers nothing-lost control
+
+loop Daily cycle — morning
+    par Signal collection
+        RPR->>EML: Check new emails and replies
+        EML-->>RPR: New inbound and follow-ups
+        RPR->>LKD: Check new LinkedIn messages
+        LKD-->>RPR: New LinkedIn messages
+        RPR->>TGM: Check new Telegram messages
+        TGM-->>RPR: New messages and asks
+        RPR->>SLK: Check statuses and discussions
+        SLK-->>RPR: New internal updates
+    and Trackers and calendar
+        RPR->>FST: Check overall fundraising status
+        FST-->>RPR: Stages, next step, last touch, blockers
+        RPR->>NIN: Check new intros
+        NIN-->>RPR: Pending intros and answers
+        RPR->>FLW: Check followers
+        FLW-->>RPR: Stages, replies, owner, follow-up
+        RPR->>LID: Check investor history
+        LID-->>RPR: Recent touches and communications
+        RPR->>FRK: Check fundraising calendar
+        FRK-->>RPR: Summary, owner, next step
+        RPR->>GCL: Check today's meetings
+        GCL-->>RPR: Meeting list
+    end
+
+    RPR->>CHK: Build morning checklist
+    CHK-->>RPR: Open tasks, critical follow-ups, meetings, blockers, pending actions
+
+    RPR->>RPR: Build morning executive summary [external comms / fund stages / today's attention points]
+    RPR-->>COO: Morning control pack [checklist / key risks / top priorities / attention points]
+end
+
+loop Intraday
+    alt New inbound or changes
+        RPR->>EML: Re-check inbox
+        EML-->>RPR: New emails
+        RPR->>TGM: Re-check Telegram
+        TGM-->>RPR: New messages
+        RPR->>FST: Re-check status changes
+        FST-->>RPR: Updated next step, last touch, blockers
+        RPR->>CHK: Refresh checklist
+        CHK-->>RPR: Refreshed task and follow-up list
+        RPR->>RPR: Update risk state and deviation signals
+        RPR-->>COO: Midday update [new signals / changed priorities / emerging risks]
+    else No critical changes
+        RPR->>RPR: Continue monitoring without escalation
+    end
+end
+
+loop Daily cycle — evening
+    RPR->>FST: End-of-day status sync
+    FST-->>RPR: Current stages, pending actions, blockers
+    RPR->>FRK: Sync meetings and summaries
+    FRK-->>RPR: Meetings with / without summary
+    RPR->>CHK: Build evening checklist
+    CHK-->>RPR: Open tasks, overdue, no owner, missing follow-up
+
+    RPR->>RPR: Nothing-lost check [unclosed signals / meetings without summary / no-owner tasks / stale statuses / missed follow-ups]
+    RPR->>RPR: Build evening daily summary [what happened / what is left / where is the risk]
+    RPR-->>COO: Evening control pack [done / pending / nothing-lost / unresolved risks]
+end
+
+loop Weekly fundraising summary
+    COO->>RPR: Trigger weekly fundraising report
+    RPR->>GCL: Sync external meetings for the week
+    GCL-->>RPR: Meetings held
+    RPR->>FRK: Sync summary, owner, next step
+    FRK-->>RPR: Fundraising meeting history
+    RPR->>FST: Sync fund stages, last touch and blockers
+    FST-->>RPR: Current pipeline status
+    RPR->>NIN: Sync early stages and pending intros
+    NIN-->>RPR: Pending actions
+    RPR->>FLW: Sync follow-up and owner on active funds
+    FLW-->>RPR: Current owners, follow-ups and replies
+    RPR->>LID: Sync investor history
+    LID-->>RPR: Latest communications
+    RPR->>WSH: Sync outreach and replies
+    WSH-->>RPR: Outreach and reply statuses
+    RPR->>CHK: Collect open tasks and execution status
+    CHK-->>RPR: Overdue, no owner, blocked, missing follow-up
+
+    RPR->>RPR: Build weekly fundraising status [meetings / summaries / open tasks / last touch / blockers / fund movement]
+    RPR->>RPT: Save weekly fundraising report
+    RPT-->>RPR: Weekly fundraising report draft
+
+    RPR->>RPR: Build weekly executive summary [overall picture / key changes / attention points]
+    RPR->>RPR: Build owner / process report [overdue follow-up / no owner / meetings without summary / stalled funds / process quality issues]
+    RPR-->>COO: Weekly reporting pack [fundraising status / executive summary / owner-process issues / deviations]
+end
+
+loop Monthly review
+    COO->>RPR: Trigger monthly review
+    RPR->>FST: Collect fund statuses for the period
+    FST-->>RPR: Current stages, decline reasons, blockers
+    RPR->>FRK: Collect meeting history and summaries for the month
+    FRK-->>RPR: Meeting history, follow-ups, next steps
+    RPR->>NIN: Collect early-stage dynamics
+    NIN-->>RPR: Early stages and pending answers
+    RPR->>FLW: Collect active-fund dynamics
+    FLW-->>RPR: Status, owner and reply changes
+    RPR->>LID: Collect key investor communications
+    LID-->>RPR: Latest touches and changes
+    RPR->>CHK: Collect execution data for the period
+    CHK-->>RPR: Overdue, closures, tails, missing actions
+
+    RPR->>RPR: Analyse post-meeting dynamics [follow-up / reply / stage movement]
+    RPR->>RPR: Analyse decline reasons, stalls and systemic blockers
+    RPR->>RPR: Detect recurring process deviations and quality gaps
+    RPR->>RPT: Build monthly review [funds / stages / blockers / decline reasons / post-meeting dynamics / execution quality]
+    RPT-->>RPR: Monthly review draft
+
+    RPR-->>COO: Monthly review pack [pipeline dynamics / blockers / decline reasons / execution quality / management attention areas]
+end
+
+loop Deviation control and escalation
+    RPR->>RPR: Check deviation rules [gap &gt; 10 days / no owner / missing follow-up / meeting without summary / stale status / blocked fund]
+    alt Deviations found
+        RPR->>CHK: Mark critical control items
+        CHK-->>RPR: Control points updated
+        RPR-->>COO: Alert pack [deviation / probable cause / owner / required action]
+    else No deviations
+        RPR-->>COO: Reporting status clean [no critical deviations]
+    end
+end
+                </pre>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-flag-checkered"></i> 1. Process Goal (TO-BE)</div>
+                <p class="text-block">Reports is a single agent that <strong>auto-builds the full reporting loop</strong> — morning / midday / evening control packs, weekly fundraising status + executive summary + owner / process report, monthly review and continuous <strong>nothing-lost + deviation control</strong> — and delivers alerts the moment a deviation appears.</p>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-layer-group"></i> 2. Process description</div>
+                <div class="timeline">
+                    <div class="step">
+                        <span class="step-owner">Reports → COO</span>
+                        <h4>A. Morning control pack</h4>
+                        <p>Monitors comms channels + trackers + calendar in parallel, builds the morning checklist and delivers a morning control pack — checklist, key risks, top priorities, attention points.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Reports → COO</span>
+                        <h4>B. Midday update</h4>
+                        <p>Rechecks inbound and tracker changes through the day, refreshes the checklist, updates the risk state and delivers a midday update on new signals, changed priorities and emerging risks.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Reports → COO</span>
+                        <h4>C. Evening control pack + nothing-lost</h4>
+                        <p>End-of-day sync of statuses and meetings; builds evening checklist; runs nothing-lost check (unclosed signals, meetings without summary, no-owner tasks, stale statuses, missed follow-ups) and delivers an evening control pack.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">COO → Reports</span>
+                        <h4>D. Weekly reporting pack</h4>
+                        <p>On weekly trigger — syncs meetings, summaries, pipeline, outreach and tasks; builds weekly fundraising status, executive summary and owner / process report; delivers the weekly reporting pack covering status, exec summary, owner-process issues and deviations.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">COO → Reports</span>
+                        <h4>E. Monthly review pack</h4>
+                        <p>On monthly trigger — collects period-level data, analyses post-meeting dynamics, decline reasons and recurring process deviations, builds the monthly review and delivers a monthly review pack with pipeline dynamics, blockers, execution quality and management attention areas.</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-owner">Reports</span>
+                        <h4>F. Continuous deviation control</h4>
+                        <p>Evaluates deviation rules in real time (gap &gt; 10 days, no owner, missing follow-up, meeting without summary, stale status, blocked fund); emits alert packs (deviation / probable cause / owner / required action) or confirms clean reporting status.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-users"></i> 3. Roles &amp; responsibility (RACI)</div>
+                <div class="grid-3">
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="role-info"><h5>CEO Office</h5><p>Consumes morning / midday / evening packs, weekly and monthly reporting packs, and acts on deviation alerts.</p></div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-chart-column"></i></div>
+                        <div class="role-info"><h5>Reports</h5><p>Auto-builds every report, runs nothing-lost and deviation control continuously, delivers alerts.</p></div>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-database"></i></div>
+                        <div class="role-info"><h5>Checklist + Report store</h5><p>Auto-populated artifacts — daily checklist, weekly / monthly reports updated by the agent.</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-server"></i> 4. Systems (TO-BE architecture)</h4>
+                    <ul>
+                        <li><strong>Reports agent</strong> — cadence engine, nothing-lost control, deviation alerts.</li>
+                        <li><strong>Email / LinkedIn / Telegram / Slack</strong> — signal sweep.</li>
+                        <li><strong>FST / NIN / FLW / LID / WSH</strong> — pipeline and investor sources.</li>
+                        <li><strong>GCL / FRK</strong> — meeting calendars.</li>
+                        <li><strong>Daily Checklist (CHK)</strong> — auto-populated morning / evening list.</li>
+                        <li><strong>Weekly / Monthly Report (RPT)</strong> — report store, auto-filled.</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-file-contract"></i> 5. Artifacts</h4>
+                    <ul>
+                        <li><strong>Morning control pack</strong> — checklist / risks / priorities.</li>
+                        <li><strong>Midday update</strong> — new signals / changed priorities / emerging risks.</li>
+                        <li><strong>Evening control pack</strong> — done / pending / nothing-lost / risks.</li>
+                        <li><strong>Weekly reporting pack</strong> — fundraising status + exec summary + owner / process report.</li>
+                        <li><strong>Monthly review pack</strong> — pipeline dynamics / blockers / execution quality.</li>
+                        <li><strong>Alert pack</strong> — deviation / probable cause / owner / required action.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title"><i class="fa-solid fa-chart-pie"></i> 6. Metrics (Target)</div>
+                <table class="custom-table">
+                    <thead><tr><th>Metric</th><th>Target</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="highlight-text">Daily roll-ups</span></td><td>Automatic — morning / midday / evening control packs delivered without manual effort.</td></tr>
+                        <tr><td><span class="highlight-text">Nothing-lost coverage</span></td><td>Continuous — unclosed signals, meetings without summary and no-owner tasks flagged every cycle.</td></tr>
+                        <tr><td><span class="highlight-text">Weekly fundraising status</span></td><td>On trigger — assembled automatically from FRK / FST / NIN / FLW / LID / WSH / CHK.</td></tr>
+                        <tr><td><span class="highlight-text">Deviation alerts</span></td><td>Real-time — deviations surface the moment they happen, not at the weekly review.</td></tr>
+                        <tr><td><span class="highlight-text">Monthly review</span></td><td>On trigger — delivered with pipeline dynamics, decline reasons and recurring process deviations.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section-box" style="background: transparent; border: none; padding: 0; box-shadow: none;">
+                <div class="section-title"><i class="fa-solid fa-rocket"></i> 7. Initiative (automation point)</div>
+                <button class="initiative-card" onclick="openDrawer()">
+                    <div class="init-icon"><i class="fa-solid fa-chart-column"></i></div>
+                    <div class="init-text">
+                        <h5>Reports — Daily / Weekly / Monthly Reporting + Nothing-Lost Control</h5>
+                        <p>Auto-builds the full reporting loop from signals, trackers, meetings and tasks; runs nothing-lost control continuously; delivers deviation alerts the moment they appear.</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-right init-arrow"></i>
+                </button>
             </div>
         </section>
     </main>
@@ -998,8 +1262,48 @@ end
         <div class="drawer-head">
             <button class="drawer-close" onclick="closeDrawer()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
             <span class="drawer-badge"><i class="fa-solid fa-bolt"></i> Module 10</span>
-            <h2 class="drawer-title">Reports initiative</h2>
-            <p class="drawer-subtitle">Drawer content will be filled in Step 20 when the TO-BE view is added.</p>
+            <h2 class="drawer-title">Reports — Daily / Weekly / Monthly Reporting + Nothing-Lost Control</h2>
+            <p class="drawer-subtitle">Auto-builds the full reporting loop on the fundraising process, runs nothing-lost control continuously and delivers deviation alerts the moment they appear.</p>
+            <div class="drawer-meta">
+                <span class="drawer-chip effect"><i class="fa-solid fa-bullseye"></i> Timely deviation detection</span>
+                <span class="drawer-chip date"><i class="fa-solid fa-calendar-day"></i> May 29, 2026</span>
+                <span class="drawer-chip"><i class="fa-solid fa-hashtag"></i> № 10</span>
+            </div>
+        </div>
+        <div class="drawer-body">
+            <h4 class="drawer-section-title">What this module does</h4>
+            <p style="font-size:14px; color:var(--text-main); line-height:1.65; margin:0 0 24px; font-weight:300;">
+                Reports automatically produces regular management reporting on the fundraising process — daily, weekly and monthly status, checklists and owner-process reports. It collects data from meetings, tasks, touches, blockers and fund stages to surface deviations on time and keep the operational loop under control.
+            </p>
+
+            <h4 class="drawer-section-title">User stories</h4>
+            <ol class="story-list">
+                <li><span>Weekly fundraising status assembles automatically from meetings, summaries, open tasks, last touches and blockers.</span></li>
+                <li><span>Get compact daily and weekly executive summary on external comms and fund stages — grasp the picture fast.</span></li>
+                <li><span>See an owner / process report: overdue follow-ups, no-owner tasks, meetings without summary, stalled funds.</span></li>
+                <li><span>Get a daily checklist on morning / evening / intraday updates and a "nothing lost" control.</span></li>
+                <li><span>Get a monthly review on funds, stages, blockers, decline reasons and post-meeting dynamics.</span></li>
+            </ol>
+
+            <h4 class="drawer-section-title">Delivery requirements</h4>
+            <ul class="req-list">
+                <li><i class="fa-solid fa-check"></i> Morning / midday / evening control packs with priorities, risks and nothing-lost audit.</li>
+                <li><i class="fa-solid fa-check"></i> Weekly fundraising status assembled from FRK, FST, NIN, FLW, LID, WSH and Daily Checklist.</li>
+                <li><i class="fa-solid fa-check"></i> Owner / process report: overdue follow-ups, no-owner tasks, meetings without summary, stalled funds, data-quality issues.</li>
+                <li><i class="fa-solid fa-check"></i> Monthly review: pipeline dynamics, decline reasons, blockers, execution quality, management attention areas.</li>
+                <li><i class="fa-solid fa-check"></i> Deviation engine: gap &gt; 10 days, no owner, missing follow-up, meeting without summary, stale status, blocked fund.</li>
+            </ul>
+
+            <div style="margin-top: 28px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="https://docs.google.com/spreadsheets/d/1QiCLAk5O0tma55ZGNQyAXRNfP-oxS0OC9Y8H_b4SMvo/edit?usp=sharing" target="_blank" rel="noopener"
+                   style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--hmnd-blue); color:#fff; font-weight:500; font-size:13px; text-decoration:none;">
+                    <i class="fa-solid fa-file-lines"></i> Open full strategy
+                </a>
+                <button onclick="closeDrawer()"
+                        style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; background:var(--surface); color:var(--hmnd-navy); font-family:inherit; font-weight:500; font-size:13px; border:1px solid var(--border); cursor:pointer;">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </button>
+            </div>
         </div>
     </aside>
 
