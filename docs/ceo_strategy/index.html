@@ -131,26 +131,6 @@
             background: var(--surface);
         }
 
-        .mobile-header {
-            display: none;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 18px;
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 90;
-        }
-        .menu-toggle {
-            font-size: 20px;
-            cursor: pointer;
-            color: var(--hmnd-navy);
-            background: none;
-            border: none;
-            padding: 4px 8px;
-        }
-
         /* Header block */
         .page-head {
             display: flex;
@@ -949,17 +929,8 @@
             .drawer-title { font-size: 22px; }
         }
 
-        /* ========== Responsive ========== */
+        /* ========== Responsive (content tweaks only — sidebar handled by the collapsible-sidebar block below) ========== */
         @media (max-width: 1024px) {
-            aside {
-                position: fixed;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                transform: translateX(-100%);
-            }
-            aside.mobile-active { transform: translateX(0); }
-            .mobile-header { display: flex; }
             main { padding: 24px 20px 60px; }
         }
         @media (max-width: 768px) {
@@ -967,13 +938,85 @@
             .top-actions { flex-wrap: wrap; }
             h1 { font-size: 28px; }
         }
+    
+        /* ========== Collapsible sidebar + mobile overlay ========== */
+        aside.sidebar { position: relative; transition: width 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        aside.sidebar.collapsed { width: 76px; padding-left: 14px; padding-right: 14px; }
+        aside.sidebar.collapsed .logo span,
+        aside.sidebar.collapsed .nav-label,
+        aside.sidebar.collapsed .nav-item > :not(i) { display: none; }
+        aside.sidebar.collapsed .logo { justify-content: center; }
+        aside.sidebar.collapsed .nav-item { justify-content: center; padding: 10px 6px; gap: 0; }
+        aside.sidebar.collapsed .nav-label { margin: 0; padding: 0; }
+
+        .sidebar-toggle {
+            position: absolute; top: 14px; right: 14px;
+            width: 28px; height: 28px;
+            background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--text-dim); font-size: 11px;
+            box-shadow: 0 2px 6px rgba(6,9,28,0.06); z-index: 5;
+            transition: all 0.2s ease;
+        }
+        .sidebar-toggle:hover { color: var(--hmnd-blue); border-color: var(--hmnd-blue); }
+        .sidebar-toggle i { transition: transform 0.3s ease; }
+        aside.sidebar.collapsed .sidebar-toggle { right: 50%; top: 58px; transform: translateX(50%); }
+        aside.sidebar.collapsed .sidebar-toggle i { transform: rotate(180deg); }
+
+        .mobile-menu-btn {
+            display: none; position: fixed; top: 14px; left: 14px;
+            width: 40px; height: 40px;
+            background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+            align-items: center; justify-content: center;
+            cursor: pointer; color: var(--hmnd-navy); font-size: 16px;
+            box-shadow: 0 2px 8px rgba(6,9,28,0.08); z-index: 210;
+        }
+        #sidebar-overlay {
+            position: fixed; inset: 0;
+            background: rgba(6, 9, 28, 0.4); backdrop-filter: blur(3px);
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 190;
+        }
+        #sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        @media (max-width: 768px) {
+            aside.sidebar {
+                position: fixed; top: 0; left: 0;
+                height: 100vh;
+                width: var(--sidebar-w);
+                padding: 36px 20px;
+                transform: translateX(-100%);
+                z-index: 200;
+            }
+            aside.sidebar.mobile-open { transform: translateX(0); }
+            aside.sidebar.collapsed {
+                width: var(--sidebar-w); padding: 36px 20px;
+            }
+            aside.sidebar.collapsed .logo span,
+            aside.sidebar.collapsed .nav-label,
+            aside.sidebar.collapsed .nav-item > :not(i) { display: inline; }
+            aside.sidebar.collapsed .logo { justify-content: flex-start; }
+            aside.sidebar.collapsed .nav-item { justify-content: flex-start; padding: 10px 14px; gap: 12px; }
+            aside.sidebar.collapsed .sidebar-toggle { right: 14px; top: 14px; transform: none; }
+            aside.sidebar.collapsed .sidebar-toggle i { transform: none; }
+            .sidebar-toggle i::before { content: "\f00d"; }  /* xmark on mobile (close) */
+            .mobile-menu-btn { display: flex; }
+            main { padding-top: 64px !important; }
+        }
+        @media (max-width: 720px) {
+            main { padding-left: 16px !important; padding-right: 16px !important; }
+        }
+        /* ========== /collapsible sidebar ========== */
     </style>
 </head>
 <body>
+    <button type="button" class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+    <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <aside id="sidebar">
+        <aside id="sidebar" class="sidebar">
+        <button type="button" class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar"><i class="fa-solid fa-angles-left"></i></button>
         <div class="logo">
             <div class="logo-dot"></div>
             <span>CEO BRAIN</span>
@@ -1006,17 +1049,6 @@
     </aside>
 
     <main>
-        <div class="mobile-header">
-            <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-            <div class="logo" style="margin:0; font-size:14px;">
-                <div class="logo-dot" style="width:10px; height:10px;"></div>
-                <span>CEO Brain</span>
-            </div>
-            <div style="width: 28px;"></div>
-        </div>
-
         <section id="dashboard-section" class="dashboard-section">
             <div class="page-head">
                 <div>
@@ -1519,9 +1551,12 @@
             document.getElementById('nav-overview').classList.toggle('active', id === 'dashboard');
             document.getElementById('nav-roadmap').classList.toggle('active', id === 'roadmap');
 
-            if (window.innerWidth <= 1024) {
-                document.getElementById('sidebar').classList.remove('mobile-active');
-                document.getElementById('sidebar-overlay').classList.remove('active');
+            if (window.innerWidth <= 768) {
+                const sb = document.getElementById('sidebar');
+                const ov = document.getElementById('sidebar-overlay');
+                if (sb) sb.classList.remove('mobile-open');
+                if (ov) ov.classList.remove('active');
+                document.body.style.overflow = '';
             }
 
             closeDrawer();
@@ -1529,8 +1564,17 @@
         }
 
         function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('mobile-active');
-            document.getElementById('sidebar-overlay').classList.toggle('active');
+            const sb = document.getElementById('sidebar');
+            const ov = document.getElementById('sidebar-overlay');
+            if (!sb) return;
+            if (window.innerWidth <= 768) {
+                const open = !sb.classList.contains('mobile-open');
+                sb.classList.toggle('mobile-open', open);
+                if (ov) ov.classList.toggle('active', open);
+                document.body.style.overflow = open ? 'hidden' : '';
+            } else {
+                sb.classList.toggle('collapsed');
+            }
         }
 
         document.addEventListener('keydown', e => {
