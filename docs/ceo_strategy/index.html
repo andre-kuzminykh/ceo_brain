@@ -1266,14 +1266,62 @@
                 ]
             },
             {
-                id: 'notes',
+                id: 'email',
                 number: 4,
+                title: 'Email',
+                icon: 'fa-envelope',
+                shortDesc: 'Unifies inbox signals across channels, normalises each event and drafts replies — auto for routine, human-review for important ones.',
+                description: 'Email aggregates incoming signals from mail, LinkedIn, WhatsApp, Telegram, Slack and other channels into a single stream. It normalises and classifies every event — who wrote, from where, about which fund, what happened, what to do next — and accelerates replies via follow-ups, prior threads, templates and personalised drafts under human review for important communications.',
+                effect: 'Reply coverage, quality and speed',
+                deadline: '2026-05-08',
+                stories: [
+                    'The agent aggregates new signals from email, LinkedIn, WhatsApp, Telegram, Slack and status files into a single inbox stream — nothing is lost.',
+                    'The agent normalises and classifies the signal: source, fund, contact, date, link, event type — to parse incoming faster.',
+                    'Get a Russian Telegram-summary of incoming: author, role, company, AUM, short gist, full translation, comms history and suggested owner.',
+                    'Get a recommended template, prior thread and suggested follow-up — to speed up email and LinkedIn work.',
+                    'Important investor replies land as personalised drafts with mandatory human review; routine follow-ups, slots and reminders go automatically.'
+                ],
+                requirements: [
+                    'Multi-channel ingestion and deduplication into a single thread context.',
+                    'Signal normalisation schema: source, fund, contact, role, company, AUM, date, link, event type, urgency.',
+                    'Russian-language Telegram digest with suggested owner.',
+                    'Reply strategy engine: reply / follow-up / reminder / intro / scheduling — auto for routine, draft for important.',
+                    'Post-send updates to FST / NIN / FLW / LID and reply-history tracking.'
+                ]
+            },
+            {
+                id: 'reports',
+                number: 5,
+                title: 'Reports',
+                icon: 'fa-chart-column',
+                shortDesc: 'Produces daily / weekly / monthly management reporting and a nothing-lost control across the fundraising process.',
+                description: 'Reports automatically produces regular management reporting on the fundraising process — daily, weekly and monthly status, checklists and owner-process reports. It collects data from meetings, tasks, touches, blockers and fund stages to surface deviations on time and keep the operational loop under control.',
+                effect: 'Timely deviation detection',
+                deadline: '2026-05-13',
+                stories: [
+                    'Weekly fundraising status assembles automatically from meetings, summaries, open tasks, last touches and blockers.',
+                    'Get compact daily and weekly executive summary on external comms and fund stages — grasp the picture fast.',
+                    'See an owner / process report: overdue follow-ups, no-owner tasks, meetings without summary, stalled funds.',
+                    'Get a daily checklist on morning / evening / intraday updates and a "nothing lost" control.',
+                    'Get a monthly review on funds, stages, blockers, decline reasons and post-meeting dynamics.'
+                ],
+                requirements: [
+                    'Morning / midday / evening control packs with priorities, risks and nothing-lost audit.',
+                    'Weekly fundraising status assembled from FRK, FST, NIN, FLW, LID, WSH and Daily Checklist.',
+                    'Owner / process report: overdue follow-ups, no-owner tasks, meetings without summary, stalled funds, data-quality issues.',
+                    'Monthly review: pipeline dynamics, decline reasons, blockers, execution quality, management attention areas.',
+                    'Deviation engine: gap > 10 days, no owner, missing follow-up, meeting without summary, stale status, blocked fund.'
+                ]
+            },
+            {
+                id: 'notes',
+                number: 6,
                 title: 'Notes',
                 icon: 'fa-note-sticky',
                 shortDesc: 'Turns transcripts and notes into structured Russian summaries with theses, risks and next steps — even when the transcript is missing.',
                 description: 'Notes automatically turns transcripts and meeting notes into structured Russian-language summaries with key theses, risks, agreements and next steps. It works even when a full transcript is missing, enforces a single notes standard and links each meeting to follow-ups, tasks, owners and downstream fund-stage movement.',
                 effect: 'Context coverage',
-                deadline: '2026-05-08',
+                deadline: '2026-05-15',
                 stories: [
                     'After a meeting the agent uses the Fireflies transcript to auto-build a Russian summary with theses, risks and next steps — no manual writing.',
                     'The agent can assemble a summary from notes or bullets when the transcript is missing — the meeting does not drop out of the process.',
@@ -1291,13 +1339,13 @@
             },
             {
                 id: 'calendar',
-                number: 5,
+                number: 7,
                 title: 'Calendar',
                 icon: 'fa-calendar-days',
                 shortDesc: 'Coordinates slots, tracks unconfirmed bookings, classifies meetings and routes fundraising meetings into a dedicated loop.',
                 description: 'Calendar runs the operational meeting loop: it coordinates slots, chases unconfirmed bookings, classifies meetings by type and routes fundraising meetings into a separate loop. It delivers the upcoming external-meeting list, prep drafts and analytics of how CEO time is spent — with optimisation recommendations.',
                 effect: 'Time optimization',
-                deadline: '2026-05-13',
+                deadline: '2026-05-20',
                 stories: [
                     'The agent helps negotiate slots, coordinates meetings and reminds on unconfirmed bookings — no manual back-and-forth.',
                     'Meetings are auto-classified: investor, partner, internal, media — no manual calendar tagging.',
@@ -1314,38 +1362,14 @@
                 ]
             },
             {
-                id: 'email',
-                number: 6,
-                title: 'Email',
-                icon: 'fa-envelope',
-                shortDesc: 'Unifies inbox signals across channels, normalises each event and drafts replies — auto for routine, human-review for important ones.',
-                description: 'Email aggregates incoming signals from mail, LinkedIn, WhatsApp, Telegram, Slack and other channels into a single stream. It normalises and classifies every event — who wrote, from where, about which fund, what happened, what to do next — and accelerates replies via follow-ups, prior threads, templates and personalised drafts under human review for important communications.',
-                effect: 'Reply coverage, quality and speed',
-                deadline: '2026-05-15',
-                stories: [
-                    'The agent aggregates new signals from email, LinkedIn, WhatsApp, Telegram, Slack and status files into a single inbox stream — nothing is lost.',
-                    'The agent normalises and classifies the signal: source, fund, contact, date, link, event type — to parse incoming faster.',
-                    'Get a Russian Telegram-summary of incoming: author, role, company, AUM, short gist, full translation, comms history and suggested owner.',
-                    'Get a recommended template, prior thread and suggested follow-up — to speed up email and LinkedIn work.',
-                    'Important investor replies land as personalised drafts with mandatory human review; routine follow-ups, slots and reminders go automatically.'
-                ],
-                requirements: [
-                    'Multi-channel ingestion and deduplication into a single thread context.',
-                    'Signal normalisation schema: source, fund, contact, role, company, AUM, date, link, event type, urgency.',
-                    'Russian-language Telegram digest with suggested owner.',
-                    'Reply strategy engine: reply / follow-up / reminder / intro / scheduling — auto for routine, draft for important.',
-                    'Post-send updates to FST / NIN / FLW / LID and reply-history tracking.'
-                ]
-            },
-            {
                 id: 'docs',
-                number: 7,
+                number: 8,
                 title: 'Docs',
                 icon: 'fa-file-lines',
                 shortDesc: 'Picks the right document for the context — NDA, one-pager, brief — and drives the workflow end-to-end.',
                 description: 'Docs determines which document the context requires — NDA, Data Room access, one-pager, brief or other investor-facing material. It picks the right template, builds a checklist and tracks the document workflow end-to-end, accelerating preparation, approval and dispatch without manual intervention.',
                 effect: 'Doc prep speed and quality',
-                deadline: '2026-05-20',
+                deadline: '2026-05-22',
                 stories: [
                     'The agent infers from context which document is needed: NDA, Data Room access, one-pager, brief or other.',
                     'Get the right NDA template and action checklist automatically — to launch the process faster.',
@@ -1363,13 +1387,13 @@
             },
             {
                 id: 'tables',
-                number: 8,
+                number: 9,
                 title: 'Tables',
                 icon: 'fa-table',
                 shortDesc: 'Pre-fills and syncs trackers, CRM and wishlists; finds duplicates, gaps and desync; suggests corrective updates.',
                 description: 'Tables automates filling and updating trackers, CRM, wishlists and other structured registries. It syncs fields between sources, finds duplicates, gaps and desync, and suggests what to update. It speeds up building fund and participant cards, logging outreach and keeping tables current — without manual data shuffling.',
                 effect: 'Table prep speed and quality',
-                deadline: '2026-05-22',
+                deadline: '2026-05-27',
                 stories: [
                     'The agent pre-fills tracker updates based on a signal, meeting or fund stage — no manual re-typing across files.',
                     'The agent syncs fields between registers, finds duplicates, highlights gaps and desync — to keep statuses current.',
@@ -1387,13 +1411,13 @@
             },
             {
                 id: 'slides',
-                number: 9,
+                number: 10,
                 title: 'Slides',
                 icon: 'fa-chalkboard',
                 shortDesc: 'Assembles presentation materials from notes, docs and trackers — one-pagers, meeting packs and executive pipeline slides.',
                 description: 'Slides assembles presentation materials from notes, documents, trackers and other sources into slide format. It generates one-slide fund summaries, meeting drafts and turns working materials into presentation form — for fast, consistent outputs to external and internal meetings.',
                 effect: 'Slide prep speed and quality',
-                deadline: '2026-05-27',
+                deadline: '2026-05-29',
                 stories: [
                     'Get a one-slide summary per fund — status and next steps — to prep fast for comms.',
                     'The agent assembles a draft meeting pack per fund from notes, docs and trackers — no from-scratch material gathering.',
@@ -1407,30 +1431,6 @@
                     'Brief / table / notes → slide narrative transformation.',
                     'Executive pipeline deck with pipeline view, progress, blockers and decision points.',
                     'Slide QA: completeness, consistency, narrative gaps, suggested improvements.'
-                ]
-            },
-            {
-                id: 'reports',
-                number: 10,
-                title: 'Reports',
-                icon: 'fa-chart-column',
-                shortDesc: 'Produces daily / weekly / monthly management reporting and a nothing-lost control across the fundraising process.',
-                description: 'Reports automatically produces regular management reporting on the fundraising process — daily, weekly and monthly status, checklists and owner-process reports. It collects data from meetings, tasks, touches, blockers and fund stages to surface deviations on time and keep the operational loop under control.',
-                effect: 'Timely deviation detection',
-                deadline: '2026-05-29',
-                stories: [
-                    'Weekly fundraising status assembles automatically from meetings, summaries, open tasks, last touches and blockers.',
-                    'Get compact daily and weekly executive summary on external comms and fund stages — grasp the picture fast.',
-                    'See an owner / process report: overdue follow-ups, no-owner tasks, meetings without summary, stalled funds.',
-                    'Get a daily checklist on morning / evening / intraday updates and a "nothing lost" control.',
-                    'Get a monthly review on funds, stages, blockers, decline reasons and post-meeting dynamics.'
-                ],
-                requirements: [
-                    'Morning / midday / evening control packs with priorities, risks and nothing-lost audit.',
-                    'Weekly fundraising status assembled from FRK, FST, NIN, FLW, LID, WSH and Daily Checklist.',
-                    'Owner / process report: overdue follow-ups, no-owner tasks, meetings without summary, stalled funds, data-quality issues.',
-                    'Monthly review: pipeline dynamics, decline reasons, blockers, execution quality, management attention areas.',
-                    'Deviation engine: gap > 10 days, no owner, missing follow-up, meeting without summary, stale status, blocked fund.'
                 ]
             }
         ];
