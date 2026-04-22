@@ -962,7 +962,7 @@ loop Weekly review and retro
     BKL-->>COO: Current backlog and execution
 
     COO->>COO: Analyse weekly fund movement and performance against goals
-    COO->>COO: Check risk zones [gap &gt; 10 days / missing follow-up / no owner / stalled fund / data conflict]
+    COO->>COO: Check risk zones [gap over 10 days / missing follow-up / no owner / stalled fund / data conflict]
     COO->>RPT: Compile weekly performance review
     RPT-->>COO: Weekly summary, risk signals and suggested reprioritization
     COO->>BKL: Update sprint backlog for next week
@@ -1276,7 +1276,7 @@ loop Daily cycle — morning, day, evening
     CHK-->>PRF: Daily checklist saved
 
     alt Goal or process risk found
-        PRF->>RPT: Emit risk signal [goal at risk / stalled fund / no reply &gt; 10 days / follow-up missing / overdue / data conflict]
+        PRF->>RPT: Emit risk signal [goal at risk / stalled fund / no reply over 10 days / follow-up missing / overdue / data conflict]
         RPT-->>PRF: Risk alert, cause, owner and suggested action
         PRF-->>COO: Alert + suggested reprioritization
         PRF->>BKL: Auto-update task priority and follow-up queue
@@ -1311,7 +1311,7 @@ loop Weekly review and retro
     PRF->>BKL: Sync tasks, owners, overdue and blocked items
 
     PRF->>PRF: Analyse weekly fund movement and performance against goals
-    PRF->>PRF: Check risk zones [gap &gt; 10 days / missing follow-up / no owner / stalled fund / data conflict]
+    PRF->>PRF: Check risk zones [gap over 10 days / missing follow-up / no owner / stalled fund / data conflict]
     PRF->>RPT: Save weekly performance review
     RPT-->>PRF: Weekly summary, risk signals and suggested reprioritization
     PRF->>BKL: Update sprint backlog for next week

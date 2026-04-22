@@ -953,7 +953,7 @@ loop Daily roll-up and control
     CHK-->>COO: Unified open task list by owner, due and status
 
     COO->>COO: Check overdue, no-owner, pending ack, missing follow-up and recurring tasks
-    COO->>COO: Check tasks with gap &gt; 10 days, missing response and stalled execution
+    COO->>COO: Check tasks with gap over 10 days, missing response and stalled execution
 
     alt Critical tails or signal-loss risk
         COO->>CHK: Mark alarm / escalate / urgent follow-up
@@ -1246,7 +1246,7 @@ loop Daily roll-up and control
     CHK-->>TSK: Unified open task list by owner, due and status
 
     TSK->>TSK: Check overdue, no-owner, pending ack, missing follow-up and recurring tasks
-    TSK->>TSK: Check tasks with gap &gt; 10 days, missing response and stalled execution
+    TSK->>TSK: Check tasks with gap over 10 days, missing response and stalled execution
 
     alt Critical tails or signal-loss risk
         TSK->>CHK: Mark alarm / escalate / urgent follow-up

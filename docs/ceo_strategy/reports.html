@@ -1207,7 +1207,7 @@ loop Monthly review
 end
 
 loop Deviation control and escalation
-    RPR->>RPR: Check deviation rules [gap &gt; 10 days / no owner / missing follow-up / meeting without summary / stale status / blocked fund]
+    RPR->>RPR: Check deviation rules [gap over 10 days / no owner / missing follow-up / meeting without summary / stale status / blocked fund]
     alt Deviations found
         RPR->>CHK: Mark critical control items
         CHK-->>RPR: Control points updated
