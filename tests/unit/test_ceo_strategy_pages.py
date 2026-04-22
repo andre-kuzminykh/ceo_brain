@@ -157,11 +157,11 @@ class TestModulePages:
 class TestIndexPage:
     def test_modules_data_order(self):
         html = (PAGES_DIR / "index.html").read_text(encoding="utf-8")
-        ids_in_order = re.findall(r"id: '(ai_memory|performance|tasks|email|reports|notes|calendar|docs|tables|slides)'", html)
+        ids_in_order = re.findall(r"id: '(ai_memory|tables|performance|tasks|email|reports|notes|calendar|docs|slides)'", html)
         assert ids_in_order == [
-            "ai_memory", "performance", "tasks",
-            "email", "reports", "notes",
-            "calendar", "docs", "tables", "slides",
+            "ai_memory", "tables", "performance",
+            "tasks", "email", "reports",
+            "notes", "calendar", "docs", "slides",
         ], f"MODULES array order wrong: {ids_in_order}"
 
     def test_ten_modules(self):
